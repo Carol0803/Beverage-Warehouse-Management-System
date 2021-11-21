@@ -33,7 +33,7 @@ CREATE TABLE ORDERS (
     order_ID			INT(10)			NOT NULL   AUTO_INCREMENT   UNIQUE,
 	order_date			DATE			NOT NULL,
 	delivery_status		CHAR(1)			NOT NULL,
-	total_quatity		NUMERIC(10)	,
+	total_quantity		NUMERIC(10)	,
 	total_amount		NUMERIC(9,2),
 	cust_ID				INT(7)			ZEROFILL   NOT NULL		UNIQUE,
 	order_details_ID	INT(10),
@@ -45,7 +45,7 @@ CREATE TABLE ORDERS (
 
 CREATE TABLE PAYMENTDETAILS (
 	payment_details_ID	INT(10)			NOT NULL   AUTO_INCREMENT   UNIQUE,
-	payment_date		DATE			NOT NULL,
+	payment_date		DATE,
 	payment_status		CHAR(1)			NOT NULL,
 	payment_method		CHAR(1)			NOT NULL,
 	amount_paid			NUMERIC(9,2)	DEFAULT 0.00,

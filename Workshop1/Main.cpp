@@ -118,20 +118,20 @@ void Login()
 		}
 		else
 		{
-			char c;
+			char b;
 			cout << "\n\nWrong User ID or Password. \nDo you want to try again? (Y/N): ";
 			do {
-			cin >> c;
-				if (c == 'y' || c == 'Y')
+			cin >> b;
+				if (b == 'y' || b == 'Y')
 					Login();
-				else if (c == 'n' || c == 'N')
+				else if (b == 'n' || b == 'N')
 					WelcomePage();
 				else
 				{
 					cout << "Invalid input." << endl;
 					cout << "Please enter Y for yes or N for no: ";
 				}
-			} while (c != 'y' && c != 'Y' && c != 'n' && c != 'N');
+			} while (b != 'y' && b != 'Y' && b != 'n' && b != 'N');
 		}
 	}
 	else
@@ -222,27 +222,27 @@ void SignUp()
 
 void CustomerMainMenu() 
 {
-	int selection;
+	int select;
 	do {
 		cout << endl << setw(13) << "MAIN MENU" << endl << endl;
 		cout << "1 - Place order\n2 - View Invoice\n0 - Log out\n\n";
 		cout << "Enter your selection: ";
-		cin >> selection;
+		cin >> select;
 
-		if (selection == 1) {
+		if (select == 1) {
 			PlaceOrder();
 		}
-		else if (selection == 2) {
+		else if (select == 2) {
 			Invoice();
 		}
-		else if (selection == 0) {
+		else if (select == 0) {
 			cout << "\nLogging out...\n";
 			WelcomePage();
 		}
 		else {
 			cout << "Invalid selection.Please try again.";
 		}
-	} while (selection != 0 && selection != 1 && selection != 2);
+	} while (select != 0 && select != 1 && select != 2);
 }
 
 void PlaceOrder() 
@@ -250,7 +250,21 @@ void PlaceOrder()
 	system("cls");
 	cout << setw(36) << "PLACE ORDER" << endl << endl;
 
-	string orderID;
+	string orderID,orderDetailsID[50], paymentDetailsID;
+	#pragma warning(disable : 4996)
+	time_t today = time(0);
+	tm* ltm = localtime(&today);
+
+	int Tday, Tmonth, Tyear;
+	string T_day, T_month, T_year, today_date;
+	Tday = ltm->tm_mday;
+	Tmonth = 1 + ltm->tm_mon;
+	Tyear = 1900 + ltm->tm_year;
+
+	T_day = (Tday < 10) ? "0" + to_string(Tday) : to_string(Tday);
+	T_month = (Tmonth < 10) ? "0" + to_string(Tmonth) : to_string(Tmonth);
+	T_year = to_string(Tyear);
+	today_date = T_year + "-" + T_month + "-" + T_day;
 
 	qstate = mysql_query(conn, "SELECT product_ID, product_name, price_per_unit, current_quantity FROM product");
 	if (!qstate)
@@ -286,10 +300,6 @@ void PlaceOrder()
 			else
 				cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-			#pragma warning(disable : 4996)
-			time_t today = time(0);
-			tm* ltm = localtime(&today);
-			string today_date = to_string(1900 + ltm->tm_year) + "-" + to_string(1 + ltm->tm_mon) + "-" + to_string(ltm->tm_mday);
 			string delivery_status = "1";	// (1 - not prepared yet)
 			string insertNewOrder_query = "INSERT INTO orders (order_date, delivery_status, cust_ID) VALUES ('" + today_date + "', '" + delivery_status + "', '" + custID + "')";
 			const char* newOrder = insertNewOrder_query.c_str();
@@ -311,60 +321,6 @@ void PlaceOrder()
 			}
 			else
 				cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
-
-			string productID;
-			int quantity;
-			cout << "Enter product ID: ";
-			cin.ignore(1, '\n');
-			getline(cin, productID);
-
-			string checkProduct_query = "SELECT * FROM product WHERE product_ID = '" + productID + "'";
-			const char* checkProduct = checkProduct_query.c_str();
-			qstate = mysql_query(conn, checkProduct);
-
-			if (!qstate)
-			{
-				res = mysql_store_result(conn);
-				if (res->row_count == 1)
-				{
-					string current_quantity, price_per_unit;
-					while (row = mysql_fetch_row(res))
-					{
-						price_per_unit = row[2];
-						current_quantity = row[3];
-					}
-
-					do {
-						cout << "Enter quatity: ";
-						cin >> quantity;
-						
-						if (quantity > stoi(current_quantity))
-						{
-							cout << "Invalid quantity. Please enter quantity less than or equal to " << current_quantity << ". \n";
-							continue;
-						}
-						double subtotal;
-						subtotal = stod(price_per_unit) * quantity;
-
-						string subtotal_s = to_string(subtotal);
-						string quantity_s = to_string(quantity);
-						string insertNewOD_query = "INSERT INTO orderdetails (order_ID, product_ID, quantity, sub_total) VALUES ('" + orderID + "', '" + productID + "', '" + quantity_s + "', '" + subtotal_s + "')";
-						const char* newOD = insertNewOD_query.c_str();
-						qstate = mysql_query(conn, newOD);
-						if (qstate)
-								cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
-
-					} while (quantity > stoi(current_quantity));
-				}
-				else
-				{
-					cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
-				}
-			}
-			else
-			{
-				cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
-			}
 		}
 		else
 		{
@@ -372,9 +328,296 @@ void PlaceOrder()
 			cout << "Please enter Y for yes or N for no: ";
 		}
 	} while (c != 'y' && c != 'Y' && c != 'n' && c != 'N');
+			
+	char y;
+	do {
+		string productID;
+		int quantity, new_quantity;
+		cout << "Enter product ID: ";
+		cin.ignore(1, '\n');
+		getline(cin, productID);
+
+		string checkProduct_query = "SELECT * FROM product WHERE product_ID = '" + productID + "'";
+		const char* checkProduct = checkProduct_query.c_str();
+		qstate = mysql_query(conn, checkProduct);
+
+		if (!qstate)
+		{
+			res = mysql_store_result(conn);
+			if (res->row_count == 1)
+			{
+				string current_quantity, price_per_unit;
+				while (row = mysql_fetch_row(res))
+				{
+					price_per_unit = row[2];
+					current_quantity = row[3];
+				}
+
+				do {
+					if (current_quantity == "0")
+					{
+						cout << "This product is currently out of stock.";
+						break;
+					}
+
+					cout << "Enter quatity: ";
+					cin >> quantity;
+
+					if (quantity > stoi(current_quantity))
+					{
+						cout << "Invalid quantity. Please enter quantity less than or equal to " << current_quantity << ". \n";
+						continue;
+					}
+					double subtotal;
+					subtotal = stod(price_per_unit) * quantity;
+
+					string subtotal_s = to_string(subtotal);
+					string quantity_s = to_string(quantity);
+					string insertNewOD_query = "INSERT INTO orderdetails (order_ID, product_ID, quantity, sub_total) VALUES ('" + orderID + "', '" + productID + "', '" + quantity_s + "', '" + subtotal_s + "')";
+					const char* newOD = insertNewOD_query.c_str();
+					qstate = mysql_query(conn, newOD);
+					if (qstate)
+						cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+					new_quantity = stoi(current_quantity) - quantity;
+
+					string newQuantity = to_string(new_quantity);
+					string updateProductQuantity_query = "UPDATE product SET current_quantity = '" + newQuantity + "' WHERE product_ID = '" + productID + "'";
+					const char* UPQ = updateProductQuantity_query.c_str();
+					qstate = mysql_query(conn, UPQ);
+					if (qstate)
+						cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+				} while (quantity > stoi(current_quantity));
+			}
+			else
+				cout << "Invalid product ID. Try again." << endl;
+		}
+		else
+			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+		cout << "\nDo you want to order another product? (Y/N):";
+		cin >> y;
+
+		while (y != 'y' && y != 'Y' && y != 'n' && y != 'N')
+		{
+			cout << "Invalid input." << endl;
+			cout << "Please enter Y for yes or N for no: ";
+			cin >> y;
+		}
+		if (y == 'n' || y == 'N')
+			break;
+	} while (y == 'y' || y == 'Y');
+
+	/*string checkODID_query = "SELECT * FROM orderdetails WHERE order_ID = '" + orderID + "'";
+	const char* checkODID = checkODID_query.c_str();
+	qstate = mysql_query(conn, checkODID);
+	if (!qstate)
+	{
+		res = mysql_store_result(conn);
+		int i = 0;
+		double total_amount = 0;
+		while (row = mysql_fetch_row(res)) {
+			orderDetailsID[i] = row[0];
+			total_amount += stod(row[4]);
+			i++;
+		}
+	}
+	else
+		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;*/
+
+	char choice;
+	string payment_method, payment_status;
+	//payment_method: 1-Cash, 2-Cheque, 3 - Bank-in, 4 - Credit
+	//payment_status: 1-Fully paid, 2 - Partially paid, 3 - Pending, 4 - Overdue
+	do {
+		cout << "Choose your payment method." << endl;
+		cout << "1 - Cash\n2 - Cheque\n3 - Bank-in\n4 - Credit\n";
+		cout << "Enter your choice: ";
+		cin >> choice;
+
+		if (choice == '1')
+			payment_method = "1";
+		else if (choice == '2')
+			payment_method = "2";
+		else if (choice == '3')
+			payment_method = "3";
+		else if (choice == '4')
+			payment_method = "4";
+		else
+			cout << "Invalid input. Try again\n";
+
+	} while (choice != '1' && choice != '2' && choice != '3' && choice != '4');
+
+	string Dday, Dmonth, Dyear;
+	int year, month, day;
+	year = 1900 + ltm->tm_year;
+	month = 1 + ltm->tm_mon;
+	day = ltm->tm_mday;
+	int daysOfMonth[] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
+
+	for (int i = 0; i < 30; i++) {
+		if (day < daysOfMonth[month - 1])
+			day++;
+		else if (day == daysOfMonth[month - 1] && month < 12) {
+			day = 1;
+			month++;
+		}
+		else if (day == daysOfMonth[month - 1] && month == 12) {
+			day = 1;
+			month = 1;
+			year++;
+		}
+	}
+	Dday = (day < 10) ? "0" + to_string(day) : to_string(day);
+	Dmonth = (month < 10) ? "0" + to_string(month) : to_string(month);
+	Dyear = to_string(year);
+	string payment_duedate = Dyear + "-" + Dmonth + "-" + Dday;
+
+	payment_status = "3";
+	string insertNewPD_query = "INSERT INTO paymentdetails (payment_status, payment_method, payment_duedate, order_ID) VALUES ('" + payment_status + "', '" + payment_method + "', '" + payment_duedate + "', '" + orderID + "')";
+	const char* newPD = insertNewPD_query.c_str();
+	qstate = mysql_query(conn, newPD);
+	if (qstate)
+		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+	/*string checkPD_query = "SELECT payment_details_ID FROM paymentdetails WHERE order_ID = '" + orderID + "'";
+	const char* checkPD = checkPD_query.c_str();
+	qstate = mysql_query(conn, checkPD);
+	if (!qstate)
+	{
+		res = mysql_store_result(conn);
+		while (row = mysql_fetch_row(res))
+			orderID = row[0];
+	}
+	else
+		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;*/
+
+	double total_amount = 0;
+	int total_quantity = 0;
+	string checkODgetQtySubT_query = "SELECT * FROM orderdetails WHERE order_ID = '" + orderID + "'";
+	const char* checkODgetQtySubT = checkODgetQtySubT_query.c_str();
+	qstate = mysql_query(conn, checkODgetQtySubT);
+	if (!qstate)
+	{
+		res = mysql_store_result(conn);
+		while (row = mysql_fetch_row(res)) {
+			total_quantity += stoi(row[3]);
+			total_amount += stod(row[4]);
+		}
+	}
+	else
+		cout << "Query Execution Problem!" << mysql_errno(conn) << endl; 
+
+	string Tquantity = to_string(total_quantity);
+	string Tamount = to_string(total_amount);
+	string updateOrders_query = "UPDATE orders SET total_quantity = '" + Tquantity + "', total_amount = '" + Tamount + "' WHERE order_ID = '" + orderID + "'";
+	const char* UO = updateOrders_query.c_str();
+	qstate = mysql_query(conn, UO);
+	if (qstate)
+		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+	Invoice();
 }
 
-void Invoice() {}
+void Invoice() 
+{
+	string custID, cust_name, cust_add1, cust_add2, cust_area, cust_postcode, cust_state, cust_tel, orderID, order_date, payment_duedate, orderID[100], order_date[100], payment_duedate[100];
+
+	system("cls");
+	cout << setw(36) << "INVOICE" << endl << endl;
+	cout << "Bill to: ";
+		
+	string checkCustDetails_query = "SELECT * FROM customer WHERE user_account_ID = '" + user_account_ID + "'";
+	const char* checkCustD = checkCustDetails_query.c_str();
+	qstate = mysql_query(conn, checkCustD);
+	if (!qstate)
+	{
+		res = mysql_store_result(conn);
+		while (row = mysql_fetch_row(res))
+		{
+			custID = row[0];
+			
+			/*cust_name = row[1];
+			cust_add1 = row[3]; 
+			cust_add2 = row[4];
+			cust_area = row[5];
+			cust_postcode = row[6];
+			cust_state = row[7]; 
+			cust_tel = row[2];*/
+
+			int i = 0, j = 0;
+			string checkOrderDetail_query = "SELECT order_ID, order_date FROM orders WHERE cust_ID = '" + custID + "'";
+			const char* checkOrderD = checkOrderDetail_query.c_str();
+			qstate = mysql_query(conn, checkOrderD);
+			if (!qstate)
+			{
+				res = mysql_store_result(conn);
+				while (row = mysql_fetch_row(res))
+				{
+					orderID[i] = row[0];
+					order_date[i] = row[1];
+					i++;
+				}
+			}
+			else
+				cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+			cout << "Orders\n";
+			for (int count = 0; count < i; count++)
+				cout << orderID[i] << endl;
+
+			bool orderGet = true;
+			do {
+				string inputID;
+				cout << "Please enter respective order ID to view the invoice: " << endl;
+				cin >> inputID;
+
+				for (int count = 0; count < i; count++)
+				{
+					if (inputID == orderID[i])
+					{
+						orderID = orderID[i];
+						order_date = order_date[i];
+						payment_duedate = payment_duedate[i];
+						orderGet = true;
+					}
+					else 
+					{
+						cout << "This order is not exist. Try again.";
+						orderGet = false;
+					}
+				}
+			} while (orderGet == false);
+
+			string checkPaymentDue_query = "SELECT payment_duedate FROM paymentdetails WHERE order_ID = '" + orderID + "'";
+			const char* checkPD = checkPaymentDue_query.c_str();
+			qstate = mysql_query(conn, checkPD);
+			if (!qstate)
+			{
+				res = mysql_store_result(conn);
+				while (row = mysql_fetch_row(res))
+					payment_duedate = row[5];
+			}
+			else
+				cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+			cout << setw(50) << "Order ID: " << orderID << left << row[1] <<setw(50) << "Order Date: "<< order_date << endl << row[3] << setw(50) << "Payment Due Date: " << payment_duedate << endl << row[4] << endl << row[5] << endl << row[6] << ", " << row[7] << endl << row[2] << endl;
+
+
+		}
+	}
+	else
+		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+	
+
+	
+
+
+
+	
+}
 
 int main() {
 	system("cls");          
