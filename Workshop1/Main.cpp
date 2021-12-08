@@ -1354,36 +1354,173 @@ void AddNewProduct()
 {
 	system("cls");
 	cout << right << setw(36) << "ADD NEW PRODUCT" << endl << endl;
-
-	string product_name, price, reorder_level;
-	cin.ignore(1, '\n');
-
-	do {
-		cout << "Enter product name: ";
-		getline(cin, product_name);
-
-		if(product_name.empty())
-			cout << "Do not leave blank.\n";
-	} while (product_name.empty());
+	string productID, product_name, price, reorder_level;
 	
-	do {
-		cout << "Set price per unit: ";
-		getline(cin, price);
-
-		if (price.empty())
-			cout << "Do not leave blank.\n";
-	} while (price.empty());
+	bool allNotEmpty = false;
+	char np;
 
 	do {
-		cout << "Set reorder level: ";
-		getline(cin, reorder_level);
+		do {
+			cout << "Enter product name: ";
+			cin.ignore(1, '\n');
+			getline(cin, product_name);
 
-		if (reorder_level.empty())
-			cout << "Do not leave blank.\n";
-	} while (reorder_level.empty());
+			if (product_name.empty())
+				cout << "Do not leave blank.\n";
+		} while (product_name.empty());
+
+		do {
+			cout << "Set price per unit: ";
+			getline(cin, price);
+
+			if (price.empty())
+				cout << "Do not leave blank.\n";
+		} while (price.empty());
+
+		do {
+			cout << "Set reorder level: ";
+			getline(cin, reorder_level);
+
+			if (reorder_level.empty())
+				cout << "Do not leave blank.\n";
+			else
+				allNotEmpty = true;
+
+		} while (reorder_level.empty());
+
+		if (allNotEmpty == true) {
+			string insertNewProduct_query = "INSERT INTO product (product_name, price_per_unit, reorder_level) values ('" + product_name + "', '" + price + "', '" + reorder_level + "')";
+			const char* newP = insertNewProduct_query.c_str();
+			qstate = mysql_query(conn, newP);
+
+			if (qstate)
+				cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+			else
+			{
+				string checkProductID_query = "SELECT product_ID FROM product WHERE product_name = '" + product_name + "'";
+				const char* checkPID = checkProductID_query.c_str();
+				qstate = mysql_query(conn, checkPID);
+
+				if (!qstate)
+				{
+					res = mysql_store_result(conn);
+					while (row = mysql_fetch_row(res))
+						cout << "New product successfully added! The product ID is " << row[0];
+
+					do {
+						cout << "\nIs there another new product? (Y/N): ";
+						cin >> np;
+
+						if (np != 'y' && np != 'Y' && np != 'n' && np != 'N')
+							cout << "Invalid input.";
+						if (np == 'n' || np == 'N') {
+							break;
+							cout << "\nPress enter to return to Main Menu....";
+							_getch();
+							system("cls");
+							AdminMainMenu();
+						}
+					} while (np != 'y' && np != 'Y' && np != 'n' && np != 'N');
+				}
+				else
+					cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+			}
+		}
+		cout << endl;
+	} while (np == 'y' || np == 'Y');
 }
 
-void AddNewStaff() {}
+void AddNewStaff() 
+{
+	system("cls");
+	cout << setw(20) << "ADD NEW STAFF" << endl << endl;
+
+	string s_name, s_tel, s_add1, s_add2, s_area, s_postcode, s_state, username, password, password2, userID;
+	string access_type = "S";
+
+	cout << "Please fill in the details to register a new staff." << endl;
+	do {
+		cin.ignore(1, '\n');
+		cout << "Name: ";
+		getline(cin, s_name);
+
+		if (s_name.empty())
+			cout << "Do not leave blank.\n";
+	} while (s_name.empty());
+
+	do {
+		cout << "Contact number: ";
+		getline(cin, s_tel);
+
+		if (s_tel.empty())
+			cout << "Do not leave blank.\n";
+	} while (s_tel.empty());
+
+	do {
+		cout << "Address: ";
+		getline(cin, s_add1);
+
+		if (s_add1.empty())
+			cout << "Do not leave blank.\n";
+	} while (s_add1.empty());
+
+	cout << "Address 2: ";
+	getline(cin, s_add2);
+
+	do {
+		cout << "Area: ";
+		getline(cin, s_area);
+
+		if (s_area.empty())
+			cout << "Do not leave blank.\n";
+	} while (s_area.empty());
+	
+	do {
+		cout << "Postcode: ";
+		getline(cin, s_postcode);
+
+		if (s_postcode.empty())
+			cout << "Do not leave blank.\n";
+	} while (s_postcode.empty());
+	
+	do {
+		cout << "State: ";
+		getline(cin, s_state);
+
+		if (s_state.empty())
+			cout << "Do not leave blank.\n";
+	} while (s_state.empty());
+	
+	do {
+		cout << "Username: ";
+		getline(cin, username);
+
+		if (username.empty())
+			cout << "Do not leave blank.\n";
+	} while (username.empty());
+	
+	do {
+		do {
+			cout << "Password: ";
+			getline(cin, password);
+
+			if (password.empty())
+				cout << "Do not leave blank.\n";
+		} while (password.empty());
+		
+		do {
+			cout << "Re-enter password: ";
+			getline(cin, password2);
+
+			if (password2.empty())
+				cout << "Do not leave blank.\n";
+		} while (password2.empty());
+		
+		if (password != password2)
+			cout << "Please enter the same password to verify. Try again.\n";
+	} while (password != password2);
+}
+
 void RemoveStaff() {}
 void CustomerList() {}
 void SalesReport() {}
