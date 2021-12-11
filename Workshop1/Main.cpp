@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <stdlib.h>
 #include <conio.h>
+#include <cctype>
 #include <mysql.h>	 //libmysql
 using namespace std;
 
@@ -1435,12 +1436,28 @@ void AddNewStaff()
 	system("cls");
 	cout << setw(20) << "ADD NEW STAFF" << endl << endl;
 
-	string s_name, s_tel, s_add1, s_add2, s_area, s_postcode, s_state, username, password, password2, userID;
-	string access_type = "S";
+	string access_type, s_name, s_tel, s_add1, s_add2, s_area, s_postcode, s_state, username, password, password2, userID;
 
 	cout << "Please fill in the details to register a new staff." << endl;
+
+	cin.ignore(1, '\n');
 	do {
-		cin.ignore(1, '\n');
+		cout << "Register as? (S-Staff, A-Administrator): ";
+		getline(cin, access_type);
+
+		if (access_type == "s")
+			access_type = "S";
+		if (access_type == "a")
+			access_type = "A";
+
+		if (access_type.empty())
+			cout << "Do not leave blank.\n";
+
+		if (access_type != "S" && access_type != "A" && access_type != "s" && access_type != "A" && !access_type.empty())
+			cout << "Invalid input.Try again.\n";
+	} while (access_type.empty()||(access_type != "S" && access_type != "A" && access_type != "s" && access_type != "A"));
+
+	do {
 		cout << "Name: ";
 		getline(cin, s_name);
 
@@ -1479,9 +1496,12 @@ void AddNewStaff()
 		cout << "Postcode: ";
 		getline(cin, s_postcode);
 
+		if (s_postcode.length() != 5)
+			cout << "Please follow Malaysia's postcode format. Try again.\n";
+
 		if (s_postcode.empty())
 			cout << "Do not leave blank.\n";
-	} while (s_postcode.empty());
+	} while (s_postcode.empty() || s_postcode.length() != 5);
 	
 	do {
 		cout << "State: ";
@@ -1519,9 +1539,145 @@ void AddNewStaff()
 		if (password != password2)
 			cout << "Please enter the same password to verify. Try again.\n";
 	} while (password != password2);
+
+	string insertNewStaffAcc_query = "INSERT INTO useraccount (username, password, access_type) values ('" + username + "', '" + password + "', '" + access_type + "')";
+	const char* newSA = insertNewStaffAcc_query.c_str();
+	qstate = mysql_query(conn, newSA);
+
+	if (qstate)
+		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+	else
+	{
+		string checkUserID_query = "SELECT user_account_ID FROM useraccount WHERE username = '" + username + "' AND password = '" + password + "'";
+		const char* checkUserID = checkUserID_query.c_str();
+		qstate = mysql_query(conn, checkUserID);
+
+		if (!qstate)
+		{
+			res = mysql_store_result(conn);
+			while (row = mysql_fetch_row(res))
+				userID = row[0];
+		}
+		else
+			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+		string insertNewStaff_query = "INSERT INTO staff (staff_name, staff_tel, staff_address1, staff_address2, staff_area, staff_postcode, staff_state, user_account_ID) VALUES ('" + s_name + "', '" + s_tel + "', '" + s_add1 + "', '" + s_add2 + "', '" + s_area + "', '" + s_postcode + "', '" + s_state + "', '" + userID + "')";
+		const char* newStaff = insertNewStaff_query.c_str();
+		qstate = mysql_query(conn, newStaff);
+
+		if (!qstate)
+		{
+			cout << endl << "New staff successfully added!\n";
+			cout << "New staff's user ID is " << userID << ".\n";
+			cout << "New staff can login the system with this user ID and password.\n";
+			cout << "\nPress enter to continue...";
+			_getch();
+			system("cls");
+			AdminMainMenu();
+		}
+		else
+			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+	}
 }
 
-void RemoveStaff() {}
+void RemoveStaff() 
+{
+	system("cls");
+	cout << setw(20) << "REMOVE STAFF" << endl << endl;
+
+	string staffID, staff_name, userID;
+
+
+	qstate = mysql_query(conn, "SELECT staff_ID, staff_name FROM staff");
+	if (!qstate)
+	{
+		cout << setw(15) << "STAFF LIST" << endl;
+		cout << left << setw(15) << "StaffID" << setw(50) << "Name" << endl;
+
+		res = mysql_store_result(conn);
+		while (row = mysql_fetch_row(res))
+			cout << left << setw(15) << row[0] << setw(50) << row[1] << endl;
+	}
+	else
+		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+	char p;
+	do {
+		cin.ignore(1, '\n');
+		cout << "Enter staff ID: ";
+		getline(cin, staffID);
+
+		string checkStaff_query = "SELECT * FROM staff WHERE staff_ID = '" + staffID + "'";
+		const char* checkStaff = checkStaff_query.c_str();
+		qstate = mysql_query(conn, checkStaff);
+
+		if (!qstate)
+		{
+			res = mysql_store_result(conn);
+			if (res->row_count == 0)
+				cout << "This staff ID is not valid.\n";
+
+			while (row = mysql_fetch_row(res)) {
+				staff_name = row[1];
+				userID = row[8];
+			}
+			char r;
+			do {
+				cout << "Are you sure you want to remove " << staff_name << " ? (Y/N):";
+				cin >> r;
+				if (r == 'y' || r == 'Y')
+				{
+					string deleteStaff = "DELETE FROM staff WHERE staff_ID = '" + staffID + "'";
+					const char* ds = deleteStaff.c_str();
+					qstate = mysql_query(conn, ds);
+
+					if (qstate)
+						cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+					string deleteUA = "DELETE FROM useraccount WHERE user_account_ID = '" + userID + "'";
+					const char* dUA = deleteUA.c_str();
+					qstate = mysql_query(conn, dUA);
+
+					if (qstate)
+						cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+					else
+						cout << "Staff remomved.";
+				}
+				else if (r == 'n' || r == 'N')
+				{
+					cout << "Operation cancelled.";
+					break;
+				}
+				else
+					cout << "Invalid input. Try again.";
+			} while (r != 'y' && r != 'Y' && r != 'n' && r != 'N');
+
+			cout << "Continue? (Y/N): ";
+			cin >> p;
+
+			if (p == 'n' || p == 'n')
+			{
+				break;
+				cout << "\nPress enter to back to Main Menu...";
+				_getch();
+				system("cls");
+				AdminMainMenu();
+			}
+			else
+			{
+				if (p != 'y' || p != 'Y')
+					cout << "Invalid input.\n";
+			}
+		}
+		else
+			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+	} while (p == 'y' && p == 'Y');
+	
+
+	
+
+}
+
 void CustomerList() {}
 void SalesReport() {}
 
