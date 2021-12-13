@@ -158,7 +158,7 @@ void WelcomePage() {
 		}
 		else if (selection == '0') {
 			cout << "\nExiting...\nProgram Terminated.\n";
-			break;
+			exit(0);
 		}
 		else
 			cout << "Invalid selection.Please try again.";
@@ -238,77 +238,127 @@ void SignUp()
 	string access_type = "C";
 	cout << setw(20) << "SIGN UP" << endl << endl;
 	cout << "Please fill the details to register an account." << endl;
-	cout << "Name: ";
 	cin.ignore(1, '\n');
-	getline(cin, cust_name);
-	cout << "Contact number: ";
-	getline(cin, cust_tel);
-	cout << "Address: ";
-	getline(cin, cust_add1);
+
+	do {
+		cout << "Name: ";
+		getline(cin, cust_name);
+
+		if (cust_name.empty())
+			cout << "Do not leave blank.\n";
+	} while (cust_name.empty());
+
+	do {
+		cout << "Contact number: ";
+		getline(cin, cust_tel);
+
+		if (cust_tel.empty())
+			cout << "Do not leave blank.\n";
+	} while (cust_tel.empty());
+
+	do {
+		cout << "Address: ";
+		getline(cin, cust_add1);
+
+		if (cust_add1.empty())
+			cout << "Do not leave blank.\n";
+	} while (cust_add1.empty());
+
 	cout << "Address 2: ";
 	getline(cin, cust_add2);
-	cout << "Area: ";
-	getline(cin, cust_area);
-	cout << "Postcode: ";
-	getline(cin, cust_postcode);
-	cout << "State: ";
-	getline(cin, cust_state);
-	cout << "Username: ";
-	getline(cin, username);
+
 	do {
-		cout << "Password: ";
-		getline(cin, password);
-		cout << "Re-enter password: ";
-		getline(cin, password2);
+		cout << "Area: ";
+		getline(cin, cust_area);
+
+		if (cust_area.empty())
+			cout << "Do not leave blank.\n";
+	} while (cust_area.empty());
+
+	do {
+		cout << "Postcode: ";
+		getline(cin, cust_postcode);
+
+		if (cust_postcode.length() != 5)
+			cout << "Please follow Malaysia's postcode format. Try again.\n";
+
+		if (cust_postcode.empty())
+			cout << "Do not leave blank.\n";
+	} while (cust_postcode.empty() || cust_postcode.length() != 5);
+
+	do {
+		cout << "State: ";
+		getline(cin, cust_state);
+
+		if (cust_state.empty())
+			cout << "Do not leave blank.\n";
+	} while (cust_state.empty());
+
+	do {
+		cout << "Username: ";
+		getline(cin, username);
+
+		if (username.empty())
+			cout << "Do not leave blank.\n";
+	} while (username.empty());
+
+	do {
+		do {
+			cout << "Password: ";
+			getline(cin, password);
+
+			if (password.empty())
+				cout << "Do not leave blank.\n";
+		} while (password.empty());
+
+		do {
+			cout << "Re-enter password: ";
+			getline(cin, password2);
+
+			if (password2.empty())
+				cout << "Do not leave blank.\n";
+		} while (password2.empty());
+
 		if (password != password2)
 			cout << "Please enter the same password to verify. Try again.\n";
 	} while (password != password2);
 
-	if (cust_name == "" || cust_tel == "" || cust_add1 == "" || cust_area == "" || cust_postcode == "" || cust_state == "" || username == "" || password == "" || password2 == "")
-	{
-		cout << "Please enter ALL of the details. Press enter to try again...";
-		_getch();
-		SignUp();
-	}
+	string insertNewUserAcc_query = "INSERT INTO useraccount (username, password, access_type) values ('" + username + "', '" + password + "', '" + access_type + "')";
+	const char* newUA = insertNewUserAcc_query.c_str();
+	qstate = mysql_query(conn, newUA);
+
+	if (qstate)
+		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 	else
 	{
-		string insertNewUserAcc_query = "INSERT INTO useraccount (username, password, access_type) values ('" + username + "', '" + password + "', '" + access_type + "')";
-		const char* newUA = insertNewUserAcc_query.c_str();
-		qstate = mysql_query(conn, newUA);
+		string checkUserID_query = "SELECT user_account_ID FROM useraccount WHERE username = '" + username + "' AND password = '" + password + "'";
+		const char* checkUserID = checkUserID_query.c_str();
+		qstate = mysql_query(conn, checkUserID);
 
-		if (qstate)
-			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
-		else
+		if (!qstate)
 		{
-			string checkUserID_query = "SELECT user_account_ID FROM useraccount WHERE username = '" + username + "' AND password = '" + password + "'";
-			const char* checkUserID = checkUserID_query.c_str();
-			qstate = mysql_query(conn, checkUserID);
-
-			if (!qstate)
-			{
-				res = mysql_store_result(conn);
-				while (row = mysql_fetch_row(res))
-					userID = row[0];
-			}
-			else
-				cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
-
-			string insertNewCustomer_query = "INSERT INTO customer (cust_name, cust_tel, cust_address1, cust_address2, cust_area, cust_postcode, cust_state, user_account_ID) VALUES ('" + cust_name + "', '" + cust_tel + "', '" + cust_add1 + "', '" + cust_add2 + "', '" + cust_area + "', '" + cust_postcode + "', '" + cust_state + "', '" + userID + "')";
-			const char* newCust = insertNewCustomer_query.c_str();
-			qstate = mysql_query(conn, newCust);
-
-			if (!qstate)
-			{
-				cout << endl << "Successfully registered!\n";
-				cout << "Your user ID is " << userID << ".\n";
-				cout << "Please log in with your userID and password.\n";
-				cout << "\nPress enter to continue...";
-				_getch();
-				WelcomePage();
-			}
-			else
-				cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+			res = mysql_store_result(conn);
+			while (row = mysql_fetch_row(res))
+				userID = row[0];
 		}
+		else
+			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+		string insertNewCustomer_query = "INSERT INTO customer (cust_name, cust_tel, cust_address1, cust_address2, cust_area, cust_postcode, cust_state, user_account_ID) VALUES ('" + cust_name + "', '" + cust_tel + "', '" + cust_add1 + "', '" + cust_add2 + "', '" + cust_area + "', '" + cust_postcode + "', '" + cust_state + "', '" + userID + "')";
+		const char* newCust = insertNewCustomer_query.c_str();
+		qstate = mysql_query(conn, newCust);
+
+		if (!qstate)
+		{
+			cout << endl << "Successfully registered!\n";
+			cout << "Your user ID is " << userID << ".\n";
+			cout << "Please log in with your userID and password.\n";
+			cout << "\nPress enter to continue...";
+			_getch();
+			WelcomePage();
+		}
+		else
+			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 	}
 }
 
@@ -384,8 +434,8 @@ void CustomerMainMenu()
 			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 	}
 	else if (select == '0') {
-		cout << "\nLogging out...\nProgram Terminated.\n";
-		exit(0);
+		cout << "\nLogging out...\n";
+		WelcomePage();
 	}
 	else {
 		cout << "Invalid selection.Please try again.";
@@ -423,7 +473,7 @@ void PlaceOrder()
 		while (row = mysql_fetch_row(res)) {
 			if (row[0] == custID) {
 				overdue = true;
-				cout << "You are not allowed to place an order due to outstanding debt.\nDebt amount: RM" << row[8] << "\nPlease pay as soon as possible.\n\n";
+				cout << "You are not allowed to place an order due to overdue debt.\nDebt amount: RM" << row[8] << "\nPlease pay as soon as possible.\n";
 			}
 		}	
 	}
@@ -822,8 +872,9 @@ void StaffMainMenu()
 		StockReport();
 	}
 	else if (choose == '0') {
-		cout << "\nLogging out...\nProgram Terminated.\n";
-		exit(0);
+		cout << "\nLogging out...\n";
+		WelcomePage();
+		//exit(0);
 	}
 	else {
 		cout << "Invalid selection.Please try again.";
@@ -842,7 +893,7 @@ void OrderList()
 	qstate = mysql_query(conn, checkOL);
 	if (!qstate)
 	{
-		cout << setw(37) << "ORDER LIST" << endl;
+		cout << setw(37) << "ORDER LIST" << endl << endl;
 		cout << left << setw(15) << "Order ID" << setw(20) << "Order Date" << setw(15) << "Customer ID" << setw(10) << "Delivery Status" << endl;
 
 		res = mysql_store_result(conn);
@@ -1002,7 +1053,25 @@ void UpdateOrder()
 		system("cls");
 		cout << "UPDATE DELIVERY STATUS\n\n";
 
-		cout << "Enter Order ID: ";
+		string ds, DS;
+		qstate = mysql_query(conn, "SELECT * FROM orders WHERE delivery_status <> '3'");
+		if (!qstate)
+		{
+			cout << left << setw(15) << "ORDERS" << setw(15) << "STATUS" << endl;
+			res = mysql_store_result(conn);
+			while (row = mysql_fetch_row(res)) {
+				DS = row[2];
+				if (DS == "1")
+					ds = "Not prepared yet";
+				else if (DS == "2")
+					ds = "Prepared";
+				cout << left << setw(15) << row[0] << setw(30) << ds << endl;
+			}
+		}
+		else
+			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+		cout << "\nEnter Order ID: ";
 		cin.ignore(1, '\n');
 		getline(cin, orderID);
 
@@ -1162,7 +1231,7 @@ void UpdateOrder()
 	}
 	else if (ch == '0')
 	{
-		cout << "Returning to Main Menu...Press enter to continue...\n";
+		cout << "\nReturning to Main Menu...\nPress enter to continue...\n";
 		_getch();
 		system("cls");
 		StaffMainMenu();
@@ -1314,7 +1383,7 @@ void StockReport()
 	StaffMainMenu();
 }
 
-void AdminMainMenu() 
+void AdminMainMenu()
 {
 	char choices;
 	cout << endl << right << setw(15) << "MAIN MENU" << endl << endl;
@@ -1341,8 +1410,9 @@ void AdminMainMenu()
 		SalesReport();
 	}
 	else if (choices == '0') {
-		cout << "\nLogging out...\nProgram Terminated.\n";
-		exit(0);
+		cout << "\nLogging out...\n";
+		WelcomePage();
+		//exit(0);
 	}
 	else {
 		cout << "Invalid selection.Please try again.";
@@ -1449,7 +1519,6 @@ void AddNewStaff()
 			access_type = "S";
 		if (access_type == "a")
 			access_type = "A";
-
 		if (access_type.empty())
 			cout << "Do not leave blank.\n";
 
