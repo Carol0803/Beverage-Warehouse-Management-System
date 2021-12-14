@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <iomanip>
 #include <string>
 #include <ctime>
@@ -1125,26 +1125,71 @@ void UpdateOrder()
 		system("cls");
 		cout << "UPDATE PAYMENT STATUS\n\n";
 
+		string ps, PS, amountPaid, amountUnpaid[1000], amount[1000];
+		double *amount_unpaid[1000], *amounts[1000];
+		int i = 0;
+		qstate = mysql_query(conn, "SELECT * FROM orders WHERE order_ID = (SELECT order_ID FROM paymentdetails WHERE payment_status <> '1')");
+		if (!qstate)
+		{
+			cout << left << setw(15) << "ORDERS" << setw(15) << "STATUS" << endl;
+			res = mysql_store_result(conn);
+			while (row = mysql_fetch_row(res)) {
+				amount[i] = row[4];
+				*amounts[i] = stod(amount[i]);
+				i++;
+			}
+			mysql_free_result(res);
+		}
+		else
+			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+		//payment_status: 1 - Fully paid, 2 - Partially paid, 3 - Pending, 4 - Overdue
+		int j = 0;
+		qstate = mysql_query(conn, "SELECT * FROM paymentdetails WHERE payment_status <> '1'");
+		if (!qstate)
+		{
+			cout << left << setw(15) << "ORDERS" << setw(20) << "STATUS" << setw(15) << "AMOUNT UNPAID" << endl;
+			res = mysql_store_result(conn);
+			while (row = mysql_fetch_row(res)) {
+				PS = row[2];
+				amountPaid = row[4];
+				*amount_unpaid[j] = *amounts[j] - stod(amountPaid);
+				if (PS == "2")
+					ps = "Partially Paid";
+				else if (PS == "3")
+					ps = "Pending";
+				else if (PS == "4")
+					ps = "Overdue";
+				amountUnpaid[j] = to_string(*amount_unpaid[j]);
+				cout << left << setw(15) << row[6] << setw(30) << ps << setw(15) << fixed << setprecision(2) << amountUnpaid[j] << endl;
+				j++;
+			}
+			mysql_free_result(res);
+		}
+		else
+			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+		cout << endl;
 		cout << "Enter Order ID: ";
 		cin.ignore(1, '\n');
 		getline(cin, orderID);
 
-		string checkOrder_query = "SELECT * FROM orders WHERE order_ID = '" + orderID + "'";
-		const char* checkOrder = checkOrder_query.c_str();
-		qstate = mysql_query(conn, checkOrder);
+		string total_amount;
+		string CO_query = "SELECT * FROM orders WHERE order_ID = '" + orderID + "'";
+		const char* CO = CO_query.c_str();
+		qstate = mysql_query(conn, CO);
 		if (!qstate)
 		{
 			res = mysql_store_result(conn);
 			if (res->row_count == 1)
 			{
-				string order_amount;
-				double newDebt, paid_amount;
-				order_amount = row[4];
-				cout << "\nPayment Status: \n1 - Fully paid\n2 - Partially paid\n3 - Pending\n4 - Overdue\nUpdate the payment status to: ";
+				row = mysql_fetch_row(res);
+				total_amount = row[4];
+				cout << "\nPayment Status: \n1 - Fully paid\n2 - Partially paid\n3 - Pending\nUpdate the payment status to: ";
 				cin >> new_payment_status;
 
 				do {
-					if (new_payment_status == "1" || new_payment_status == "2" || new_payment_status == "3" || new_payment_status == "4")
+					if (new_payment_status == "1" || new_payment_status == "2" || new_payment_status == "3")
 					{
 						string updatePaymentStatus_query = "UPDATE paymentdetails SET payment_status = '" + new_payment_status + "'WHERE order_ID = '" + orderID + "'";
 						const char* UPS = updatePaymentStatus_query.c_str();
@@ -1168,9 +1213,10 @@ void UpdateOrder()
 							else
 								cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-							/*if (new_payment_status == "1")
+							double newDebt, new_paid_amount, paid_amount = 0;
+							if (new_payment_status == "1")
 							{
-								newDebt = stod(debt) - stod(order_amount);
+								newDebt = stod(debt) - (stod(total_amount)-stod(amountPaid));
 								string new_debt = to_string(newDebt);
 								string updateDebt1_query = "UPDATE customer SET cust_debt_amount = '" + new_debt + "' WHERE cust_ID = '" + custID + "'";
 								const char* UD1 = updateDebt1_query.c_str();
@@ -1178,17 +1224,17 @@ void UpdateOrder()
 								if (qstate)
 									cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-								string updatePD1_query = "UPDATE paymentdetails SET payment_date = '" + today_date + "', amount_paid = '" + order_amount + "' WHERE order_ID = '" + orderID + "'";
+								string updatePD1_query = "UPDATE paymentdetails SET payment_date = '" + today_date + "', amount_paid = '" + total_amount + "' WHERE order_ID = '" + orderID + "'";
 								const char* UPD1 = updatePD1_query.c_str();
 								qstate = mysql_query(conn, UPD1);
 								if (qstate)
 									cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 							}
-
-							if (new_payment_status == "2")
+							else if (new_payment_status == "2")
 							{
 								cout << "Enter amount paid: RM ";
 								cin >> paid_amount;
+								new_paid_amount = paid_amount + stod(amountPaid);
 								newDebt = stod(debt) - paid_amount;
 								string new_debt = to_string(newDebt);
 								string updateDebt_query = "UPDATE customer SET cust_debt_amount = '" + new_debt + "' WHERE cust_ID = '" + custID + "'";
@@ -1197,13 +1243,13 @@ void UpdateOrder()
 								if (qstate)
 									cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-								string paidAmount = to_string(paid_amount);
-								string updatePD_query = "UPDATE paymentdetails SET payment_date = '" + today_date + "', amount_paid = '" + paidAmount + "' WHERE order_ID = '" + orderID + "'";
+								string newPaidAmount = to_string(new_paid_amount);
+								string updatePD_query = "UPDATE paymentdetails SET payment_date = '" + today_date + "', amount_paid = '" + newPaidAmount + "' WHERE order_ID = '" + orderID + "'";
 								const char* UPD = updatePD_query.c_str();
 								qstate = mysql_query(conn, UPD);
 								if (qstate)
 									cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
-							}*/
+							}
 
 							cout << "\nSuccessfully updated.\n";
 							cout << "Press enter to return to Main Menu...";
@@ -1218,10 +1264,10 @@ void UpdateOrder()
 						_getch();
 						UpdateOrder();
 					}
-				} while (new_payment_status != "1" && new_payment_status != "2" && new_payment_status != "3" && new_payment_status != "4");
+				} while (new_payment_status != "1" && new_payment_status != "2" && new_payment_status != "3");
 			}
 			else {
-				cout << "This order is not exist. Press enter to try again..." << endl;
+				cout << "\nThis order is not exist. \nPress enter to try again..." << endl;
 				_getch();
 				UpdateOrder();
 			}
