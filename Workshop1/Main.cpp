@@ -121,7 +121,7 @@ string getTodayDate()
 void checkOverdue()
 {
 	string orderID;
-	string checkOverdue_query = "SELECT * FROM paymentdetails WHERE DATE(payment_duedate) < '" + today_date + "'";
+	string checkOverdue_query = "SELECT * FROM paymentdetails WHERE DATE(payment_duedate) < '" + today_date + "' AND payment_status <> '1'";
 	const char* CO = checkOverdue_query.c_str();
 	qstate = mysql_query(conn, CO);
 	if (!qstate)
@@ -1051,13 +1051,13 @@ void UpdateOrder()
 	if (ch == '1')
 	{
 		system("cls");
-		cout << "UPDATE DELIVERY STATUS\n\n";
+		cout << "    UPDATE DELIVERY STATUS\n\n";
 
 		string ds, DS;
 		qstate = mysql_query(conn, "SELECT * FROM orders WHERE delivery_status <> '3'");
 		if (!qstate)
 		{
-			cout << left << setw(15) << "ORDERS" << setw(15) << "STATUS" << endl;
+			cout << left << setw(15) << "Orders" << setw(15) << "Status" << endl;
 			res = mysql_store_result(conn);
 			while (row = mysql_fetch_row(res)) {
 				DS = row[2];
@@ -1123,19 +1123,18 @@ void UpdateOrder()
 	else if (ch == '2')
 	{
 		system("cls");
-		cout << "UPDATE PAYMENT STATUS\n\n";
+		cout << "\t    UPDATE PAYMENT STATUS\n\n";
 
-		string ps, PS, amountPaid, amountUnpaid[1000], amount[1000];
-		double *amount_unpaid[1000], *amounts[1000];
+		string ps, PS, amount_paid, amount[1000];
+		double amount_unpaid[1000], amounts[1000];
 		int i = 0;
-		qstate = mysql_query(conn, "SELECT * FROM orders WHERE order_ID = (SELECT order_ID FROM paymentdetails WHERE payment_status <> '1')");
+		qstate = mysql_query(conn, "SELECT * FROM orders WHERE order_ID IN (SELECT order_ID FROM paymentdetails WHERE payment_status <> '1')");
 		if (!qstate)
 		{
-			cout << left << setw(15) << "ORDERS" << setw(15) << "STATUS" << endl;
 			res = mysql_store_result(conn);
 			while (row = mysql_fetch_row(res)) {
 				amount[i] = row[4];
-				*amounts[i] = stod(amount[i]);
+				amounts[i] = stod(amount[i]);
 				i++;
 			}
 			mysql_free_result(res);
@@ -1143,28 +1142,25 @@ void UpdateOrder()
 		else
 			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-		//payment_status: 1 - Fully paid, 2 - Partially paid, 3 - Pending, 4 - Overdue
 		int j = 0;
 		qstate = mysql_query(conn, "SELECT * FROM paymentdetails WHERE payment_status <> '1'");
 		if (!qstate)
 		{
-			cout << left << setw(15) << "ORDERS" << setw(20) << "STATUS" << setw(15) << "AMOUNT UNPAID" << endl;
+			cout << left << setw(15) << "Orders" << setw(20) << "Status" << setw(15) << "Amount Unpaid" << endl;
 			res = mysql_store_result(conn);
 			while (row = mysql_fetch_row(res)) {
 				PS = row[2];
-				amountPaid = row[4];
-				*amount_unpaid[j] = *amounts[j] - stod(amountPaid);
+				amount_paid = row[4];
+				amount_unpaid[j] = amounts[j] - stod(amount_paid);
 				if (PS == "2")
 					ps = "Partially Paid";
 				else if (PS == "3")
 					ps = "Pending";
 				else if (PS == "4")
 					ps = "Overdue";
-				amountUnpaid[j] = to_string(*amount_unpaid[j]);
-				cout << left << setw(15) << row[6] << setw(30) << ps << setw(15) << fixed << setprecision(2) << amountUnpaid[j] << endl;
+				cout << left << setw(15) << row[6] << setw(20) << ps << setw(15) << fixed << setprecision(2) << amount_unpaid[j] << endl;
 				j++;
 			}
-			mysql_free_result(res);
 		}
 		else
 			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
@@ -1185,15 +1181,34 @@ void UpdateOrder()
 			{
 				row = mysql_fetch_row(res);
 				total_amount = row[4];
-				cout << "\nPayment Status: \n1 - Fully paid\n2 - Partially paid\n3 - Pending\nUpdate the payment status to: ";
+				cout << "\nPayment Status: \n1 - Fully paid\n2 - Partially paid\nUpdate the payment status to: ";
 				cin >> new_payment_status;
 
 				do {
-					if (new_payment_status == "1" || new_payment_status == "2" || new_payment_status == "3")
+					if (new_payment_status == "1" || new_payment_status == "2")
 					{
-						string updatePaymentStatus_query = "UPDATE paymentdetails SET payment_status = '" + new_payment_status + "'WHERE order_ID = '" + orderID + "'";
-						const char* UPS = updatePaymentStatus_query.c_str();
-						qstate = mysql_query(conn, UPS);
+						string paymentStatus, amountPaid;
+						string ps_query = "SELECT * FROM paymentdetails WHERE order_ID = '" + orderID + "'";
+						const char* ps = ps_query.c_str();
+						qstate = mysql_query(conn, ps);
+						if (!qstate)
+						{
+							res = mysql_store_result(conn);
+							if (res->row_count == 1) {
+								row = mysql_fetch_row(res);
+								paymentStatus = row[2];
+								amountPaid = row[4];
+							}
+						}
+						else
+							cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+						if (paymentStatus == "4" && new_payment_status == "2")
+							new_payment_status = "4";
+
+						string updateNewPaymentStatus_query = "UPDATE paymentdetails SET payment_status = '" + new_payment_status + "'WHERE order_ID = '" + orderID + "'";
+						const char* UNPS = updateNewPaymentStatus_query.c_str();
+						qstate = mysql_query(conn, UNPS);
 						if (qstate)
 							cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 						else
@@ -1230,7 +1245,7 @@ void UpdateOrder()
 								if (qstate)
 									cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 							}
-							else if (new_payment_status == "2")
+							else
 							{
 								cout << "Enter amount paid: RM ";
 								cin >> paid_amount;
@@ -1264,7 +1279,7 @@ void UpdateOrder()
 						_getch();
 						UpdateOrder();
 					}
-				} while (new_payment_status != "1" && new_payment_status != "2" && new_payment_status != "3");
+				} while (new_payment_status != "1" && new_payment_status != "2");
 			}
 			else {
 				cout << "\nThis order is not exist. \nPress enter to try again..." << endl;
@@ -1317,7 +1332,21 @@ void DefaulterList()
 void AddStock() 
 {
 	system("cls");
-	cout << right << setw(50) << "ADD STOCK" << endl << endl;
+	cout << right << setw(43) << "ADD STOCK" << endl << endl;
+
+	qstate = mysql_query(conn, "SELECT * FROM product");
+	if (!qstate)
+	{
+		cout << setw(45) << "PRODUCT LIST" << endl;
+		cout << left << setw(15) << "Product ID" << setw(50) << "Product Name"  << setw(10) << "Stock Left" << endl;
+
+		res = mysql_store_result(conn);
+		while (row = mysql_fetch_row(res))
+			cout << left << setw(15) << row[0] << setw(50) << row[1]  << setw(10) << row[3] << endl;
+	}
+	else
+		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+	cout << endl;
 
 	string productID, current_quantity, added_quantity;
 	int quantity, add_quantity;
@@ -1383,20 +1412,22 @@ void AddStock()
 void StockReport() 
 {
 	system("cls");
-	cout << right << setw(55) << "STOCK REPORT" << endl << endl;
-
+	cout << right << setw(45) << "STOCK REPORT" << endl;
+	cout << right << setw(37) << "DATE: " << today_date << endl << endl;
+	
 	qstate = mysql_query(conn, "SELECT * FROM product");
 	if (!qstate)
 	{
-		cout << setw(55) << "PRODUCT LIST" << endl;
-		cout << left << setw(15) << "Product ID" << setw(50) << "Product Name" << setw(15) << "Price/unit" << setw(10) << "Current Quantity" << endl;
-		
+		cout << setw(45) << "PRODUCT LIST" << endl;
+		cout << left << setw(15) << "Product ID" << setw(50) << "Product Name" << setw(10) << "Stock Left" << endl;
+
 		res = mysql_store_result(conn);
 		while (row = mysql_fetch_row(res))
-			cout << left << setw(15) << row[0] << setw(50) << row[1] << setw(15) << row[2] << setw(10) << row[3] << endl;
+			cout << left << setw(15) << row[0] << setw(50) << row[1] << setw(10) << row[3] << endl;
 	}
 	else
 		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+	cout << endl;
 
 	qstate = mysql_query(conn, "SELECT * FROM product");
 	if (!qstate)
@@ -1423,10 +1454,27 @@ void StockReport()
 	else
 		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
+	string position;
+	string checkStaffPosition_query = "SELECT * FROM useraccount WHERE user_account_ID = '"+ user_account_ID +"'";
+	const char* checkStaffPosition = checkStaffPosition_query.c_str();
+	qstate = mysql_query(conn, checkStaffPosition);
+	if (!qstate)
+	{
+		res = mysql_store_result(conn);
+		while (row = mysql_fetch_row(res))
+			position = row[3];
+	}
+	else
+		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
 	cout << "\nPress enter to return to Main Menu....";
-	_getch();
+	getch();
 	system("cls");
-	StaffMainMenu();
+	if (position == "S")
+		StaffMainMenu();
+	if (position == "A")
+		AdminMainMenu();
+
 }
 
 void AdminMainMenu()
@@ -1522,7 +1570,7 @@ void AddNewProduct()
 				{
 					res = mysql_store_result(conn);
 					while (row = mysql_fetch_row(res))
-						cout << "New product successfully added! The product ID is " << row[0];
+						cout << "\nNew product successfully added! The product ID is " << row[0];
 
 					do {
 						cout << "\nIs there another new product? (Y/N): ";
@@ -1531,7 +1579,6 @@ void AddNewProduct()
 						if (np != 'y' && np != 'Y' && np != 'n' && np != 'N')
 							cout << "Invalid input.";
 						if (np == 'n' || np == 'N') {
-							break;
 							cout << "\nPress enter to return to Main Menu....";
 							_getch();
 							system("cls");
@@ -1550,11 +1597,11 @@ void AddNewProduct()
 void AddNewStaff() 
 {
 	system("cls");
-	cout << setw(20) << "ADD NEW STAFF" << endl << endl;
+	cout << setw(35) << "ADD NEW STAFF" << endl << endl;
 
 	string access_type, s_name, s_tel, s_add1, s_add2, s_area, s_postcode, s_state, username, password, password2, userID;
 
-	cout << "Please fill in the details to register a new staff." << endl;
+	cout << "Please fill in the details to register a new staff." << endl << endl;
 
 	cin.ignore(1, '\n');
 	do {
@@ -1685,8 +1732,8 @@ void AddNewStaff()
 			cout << endl << "New staff successfully added!\n";
 			cout << "New staff's user ID is " << userID << ".\n";
 			cout << "New staff can login the system with this user ID and password.\n";
-			cout << "\nPress enter to continue...";
-			_getch();
+			cout << "\nPress enter to return to Main Menu...";
+			getch();
 			system("cls");
 			AdminMainMenu();
 		}
@@ -1698,7 +1745,7 @@ void AddNewStaff()
 void RemoveStaff() 
 {
 	system("cls");
-	cout << setw(20) << "REMOVE STAFF" << endl << endl;
+	cout << setw(15) << "REMOVE STAFF" << endl << endl;
 
 	string staffID, staff_name, userID;
 
@@ -1745,9 +1792,23 @@ void RemoveStaff()
 			res = mysql_store_result(conn);
 			if (res->row_count == 0)
 			{
-				cout << "This staff ID is not valid.\n";
-				p = 'y';
-				continue;
+				do
+				{
+					cout << "This staff ID is not valid.";
+					cout << "\nContinue? (Y/N): ";
+					cin >> p;
+					if (p == 'n' || p == 'N')
+					{
+						cout << "\nPress enter to back to Main Menu...";
+						_getch();
+						system("cls");
+						AdminMainMenu();
+					}
+					else if (p == 'y' || p == 'Y')
+						continue;
+					else
+						cout << "Invalid input.\n\n";
+				} while (p != 'y' && p != 'Y' && p != 'n' && p != 'N');
 			}
 			
 				while (row = mysql_fetch_row(res)) {
