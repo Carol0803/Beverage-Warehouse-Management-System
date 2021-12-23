@@ -16,7 +16,7 @@ MYSQL* conn;	//database connection
 MYSQL_ROW row;	//to store one row
 MYSQL_RES* res; //return result from query
 
-string user_account_ID;
+string user_account_ID, access_type, username;
 string today_date;
 string now_time;
 //int year, month, day;
@@ -26,7 +26,7 @@ string now_time;
 
 //void exit(int status);
 string getTodayDate();
-string getNowTime();
+//string getNowTime();
 //string getDueDate(int, int&, int&, int&);
 void checkOverdue();
 //User Management
@@ -74,6 +74,26 @@ public:
 		}
 	}
 };
+
+void header()
+{
+	string status;
+
+	//cout << "\t------------------------------------------" << endl;
+	cout << "\n\tBeverage Warehouse Management System  " << endl;
+	//cout << "\t------------------------------------------" << endl;
+
+	if (access_type == "A")
+		status = "Administrator";
+	else if (access_type == "S")
+		status = "Staff";
+	else if (access_type == "C")
+		status = "Customer";
+
+	cout << "\tUser: " << status << endl;
+	cout << "\tUsername: " << username << endl << endl;
+	
+}
 
 string getTodayDate()
 {
@@ -170,9 +190,11 @@ void WelcomePage() {
 	char selection;
 	do {
 		system("cls");
-		cout << "\nBeverage Warehouse Management System" << endl << endl;
-		cout << "1 - Log In\n2 - Sign Up\n0 - Exit\n\n";
-		cout << "Enter your selection: ";
+		cout << endl << right << setw(45) << "\t------------------------------------------" << endl;
+		cout << right << setw(45) << "\t|  Beverage Warehouse Management System  |" << endl;
+		cout << right << setw(45) << "\t------------------------------------------" << endl;
+		cout << "\n\t1 - Log In\n\t2 - Sign Up\n\t0 - Exit\n\n";
+		cout << "\tEnter your selection: ";
 		cin >> selection;
 		cin.ignore(100, '\n');
 
@@ -183,11 +205,11 @@ void WelcomePage() {
 			SignUp();
 		}
 		else if (selection == '0') {
-			cout << "\nExiting...\nProgram Terminated.\n";
+			cout << "\n\tExiting...\n\tProgram Terminated.\n";
 			exit(0);
 		}
 		else
-			cout << "Invalid selection.Please try again.";
+			cout << "\tInvalid selection.Please try again.";
 	} while (selection != '0' && selection != '1' && selection != '2');
 }
 
@@ -195,10 +217,14 @@ void Login()
 {
 	system("cls");
 	string userID, password;
-	cout << endl << setw(13) << "LOG IN" << endl << endl;
-	cout << "User ID: ";
+	cout << endl << setw(52) << "------------------------------------------" << endl;
+	cout << setw(52) << "|  Beverage Warehouse Management System  |" << endl;
+	cout << setw(52) << "------------------------------------------" << endl;
+	
+	cout << endl << right << setw(33) << "LOG IN" << endl;
+	cout << "\n\t\tUser ID: ";
 	cin >> userID;
-	cout << "Password: ";
+	cout << "\t\tPassword: ";
 	char pw;
 	while ((pw = _getch()) != 13)
 	{
@@ -217,14 +243,11 @@ void Login()
 		{
 			while (row = mysql_fetch_row(res))
 			{
-				string access_type, username;
 				user_account_ID = row[0];
 				username = row[1];
 				access_type = row[3];
 
 				system("cls");
-				cout << setw(27) << "Hi, " << username << "!" << endl;
-				cout << "Please select an option by entering the number labelled." << endl;
 
 				if (access_type == "A")
 					AdminMainMenu();
@@ -237,7 +260,7 @@ void Login()
 		else
 		{
 			char b;
-			cout << "\n\nWrong User ID or Password. \nDo you want to try again? (Y/N): ";
+			cout << "\n\n\t\tWrong User ID or Password. \n\t\tDo you want to try again? (Y/N): ";
 			do {
 				cin >> b;
 				cin.ignore(100, '\n');
@@ -247,8 +270,8 @@ void Login()
 					WelcomePage();
 				else
 				{
-					cout << "Invalid input." << endl;
-					cout << "Please enter Y for yes or N for no: ";
+					cout << "\t\tInvalid input." << endl;
+					cout << "\t\tPlease enter Y for yes or N for no: ";
 				}
 			} while (b != 'y' && b != 'Y' && b != 'n' && b != 'N');
 		}
@@ -260,94 +283,97 @@ void Login()
 void SignUp()
 {
 	system("cls");
+	cout << endl << setw(52) << "------------------------------------------" << endl;
+	cout << setw(52) << "|  Beverage Warehouse Management System  |" << endl;
+	cout << setw(52) << "------------------------------------------" << endl;
 
 	string cust_name, cust_tel, cust_add1, cust_add2, cust_area, cust_postcode, cust_state, username, password, password2, userID;
 	string access_type = "C";
-	cout << setw(28) << "SIGN UP" << endl << endl;
-	cout << "Please fill the details to register an account." << endl;
-	cin.ignore(1, '\n');
+	cout << endl << "\t" << right << setw(26) << "SIGN UP" << endl << endl;
+	cout << "\tPlease fill the details to register an account." << endl;
+	//cin.ignore(1, '\n');
 
 	do {
-		cout << "Name: ";
+		cout << "\tName: ";
 		getline(cin, cust_name);
 
 		if (cust_name.empty())
-			cout << "Do not leave blank.\n";
+			cout << "\tDo not leave blank.\n";
 	} while (cust_name.empty());
 
 	do {
-		cout << "Contact number: ";
+		cout << "\tContact number: ";
 		getline(cin, cust_tel);
 
 		if (cust_tel.empty())
-			cout << "Do not leave blank.\n";
+			cout << "\tDo not leave blank.\n";
 	} while (cust_tel.empty());
 
 	do {
-		cout << "Address: ";
+		cout << "\tAddress: ";
 		getline(cin, cust_add1);
 
 		if (cust_add1.empty())
-			cout << "Do not leave blank.\n";
+			cout << "\tDo not leave blank.\n";
 	} while (cust_add1.empty());
 
-	cout << "Address 2: ";
+	cout << "\tAddress 2: ";
 	getline(cin, cust_add2);
 
 	do {
-		cout << "Area: ";
+		cout << "\tArea: ";
 		getline(cin, cust_area);
 
 		if (cust_area.empty())
-			cout << "Do not leave blank.\n";
+			cout << "\tDo not leave blank.\n";
 	} while (cust_area.empty());
 
 	do {
-		cout << "Postcode: ";
+		cout << "\tPostcode: ";
 		getline(cin, cust_postcode);
 
 		if (cust_postcode.length() != 5)
-			cout << "Please follow Malaysia's postcode format. Try again.\n";
+			cout << "\tPlease follow Malaysia's postcode format. Try again.\n";
 
 		if (cust_postcode.empty())
-			cout << "Do not leave blank.\n";
+			cout << "\tDo not leave blank.\n";
 	} while (cust_postcode.empty() || cust_postcode.length() != 5);
 
 	do {
-		cout << "State: ";
+		cout << "\tState: ";
 		getline(cin, cust_state);
 
 		if (cust_state.empty())
-			cout << "Do not leave blank.\n";
+			cout << "\tDo not leave blank.\n";
 	} while (cust_state.empty());
 
 	do {
-		cout << "Username: ";
+		cout << "\tUsername: ";
 		getline(cin, username);
 
 		if (username.empty())
-			cout << "Do not leave blank.\n";
+			cout << "\tDo not leave blank.\n";
 	} while (username.empty());
 
 	do {
 		do {
-			cout << "Password: ";
+			cout << "\tPassword: ";
 			getline(cin, password);
 
 			if (password.empty())
-				cout << "Do not leave blank.\n";
+				cout << "\tDo not leave blank.\n";
 		} while (password.empty());
 
 		do {
-			cout << "Re-enter password: ";
+			cout << "\tRe-enter password: ";
 			getline(cin, password2);
 
 			if (password2.empty())
-				cout << "Do not leave blank.\n";
+				cout << "\tDo not leave blank.\n";
 		} while (password2.empty());
 
 		if (password != password2)
-			cout << "Please enter the same password to verify. Try again.\n";
+			cout << "\tPlease enter the same password to verify. Try again.\n";
 	} while (password != password2);
 
 	string insertNewUserAcc_query = "INSERT INTO useraccount (username, password, access_type) values ('" + username + "', '" + password + "', '" + access_type + "')";
@@ -377,10 +403,10 @@ void SignUp()
 
 		if (!qstate)
 		{
-			cout << endl << "Successfully registered!\n";
-			cout << "Your user ID is " << userID << ".\n";
-			cout << "Please log in with your userID and password.\n";
-			cout << "\nPress enter to continue...";
+			cout << endl << "\tSuccessfully registered!\n";
+			cout << "\tYour user ID is " << userID << ".\n";
+			cout << "\tPlease log in with your userID and password.\n";
+			cout << "\n\tPress enter to continue...";
 			_getch();
 			WelcomePage();
 		}
@@ -392,9 +418,13 @@ void SignUp()
 void CustomerMainMenu()
 {
 	char select;
-	cout << endl << right << setw(13) << "MAIN MENU" << endl << endl;
-	cout << "1 - Place order\n2 - View Invoice\n0 - Log out\n\n";
-	cout << "Enter your selection: ";
+	header();
+	cout << "\t-----------------------------------------------------------" << endl;
+	cout << "\t|       		MAIN MENU  			  |" << endl;
+	cout << "\t-----------------------------------------------------------" << endl;
+	cout << "\tPlease select an option by entering the number labelled.\n" << endl;
+	cout << "\t1 - Place order\n\t2 - View Invoice\n\t0 - Log out\n\n";
+	cout << "\tEnter your selection: ";
 	cin >> select;
 	cin.ignore(100, '\n');
 
@@ -404,7 +434,10 @@ void CustomerMainMenu()
 		string custid, orderid, order_id;
 
 		system("cls");
-		cout << right << setw(12) << "INVOICE" << endl << endl;
+		header();
+		cout << "\t---------------------------------------------------------" << endl;
+		cout << "\t| 			INVOICE	  			|" << endl;
+		cout << "\t---------------------------------------------------------" << endl << endl;
 
 		string checkCustID_query = "SELECT cust_ID FROM customer WHERE user_account_ID = '" + user_account_ID + "'";
 		const char* checkCustID = checkCustID_query.c_str();
@@ -418,7 +451,7 @@ void CustomerMainMenu()
 		else
 			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-		cout << "Orders: " << endl;
+		cout << "\tOrders: " << endl;
 		string checkOrderID_query = "SELECT * FROM orders WHERE cust_ID = '" + custid + "'";
 		const char* checkOrderID = checkOrderID_query.c_str();
 		qstate = mysql_query(conn, checkOrderID);
@@ -426,12 +459,12 @@ void CustomerMainMenu()
 		{
 			res = mysql_store_result(conn);
 			while (row = mysql_fetch_row(res))
-				cout << row[0] << endl;
+				cout << "\t" << row[0] << endl;
 		}
 		else
 			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-		cout << "\nEnter order ID: ";
+		cout << "\n\tEnter order ID: ";
 		//cin.ignore(1, '\n');
 		getline(cin, orderid);
 
@@ -450,7 +483,7 @@ void CustomerMainMenu()
 				}
 			}
 			if (orderFound == false) {
-				cout << "This order is not exist. Press enter to continue..." << endl;
+				cout << "\tThis order is not exist. Press enter to continue..." << endl;
 				_getch();
 				system("cls");
 				CustomerMainMenu();
@@ -462,11 +495,11 @@ void CustomerMainMenu()
 			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 	}
 	else if (select == '0') {
-		cout << "\nLogging out...\n";
+		cout << "\n\tLogging out...\n";
 		WelcomePage();
 	}
 	else {
-		cout << "Invalid selection.Please try again.";
+		cout << "\tInvalid selection.Please try again.";
 		CustomerMainMenu();
 	}
 }
@@ -474,7 +507,10 @@ void CustomerMainMenu()
 void PlaceOrder()
 {
 	system("cls");
-	cout << right << setw(51) << "PLACE ORDER" << endl << endl;
+	header();
+	cout << "\t-------------------------------------------------------------------------------------------" << endl;
+	cout << "\t|       				PLACE ORDER  					  |" << endl;
+	cout << "\t-------------------------------------------------------------------------------------------" << endl << endl;
 
 	string custID, debt;
 	string checkCustID_query = "SELECT * FROM customer WHERE user_account_ID = '" + user_account_ID + "'";
@@ -501,7 +537,7 @@ void PlaceOrder()
 		while (row = mysql_fetch_row(res)) {
 			if (row[0] == custID) {
 				overdue = true;
-				cout << "You are not allowed to place an order due to overdue debt.\nDebt amount: RM" << row[8] << "\nPlease pay as soon as possible.\n";
+				cout << "\tYou are not allowed to place an order due to overdue debt.\n\tDebt amount: RM" << row[8] << "\n\tPlease pay as soon as possible.\n";
 			}
 		}
 	}
@@ -510,7 +546,7 @@ void PlaceOrder()
 
 	if (overdue == true)
 	{
-		cout << "\nPress enter to return to Main Menu....";
+		cout << "\n\tPress enter to return to Main Menu....";
 		_getch();
 		system("cls");
 		CustomerMainMenu();
@@ -520,20 +556,20 @@ void PlaceOrder()
 	qstate = mysql_query(conn, "SELECT product_ID, product_name, price_per_unit, current_quantity FROM product");
 	if (!qstate)
 	{
-		cout << setw(51) << "PRODUCT LIST" << endl;
-		cout << left << setw(15) << "Product ID" << setw(50) << "Product Name" << setw(15) << "Price/unit" << setw(10) << "Stock Left" << endl;
+		cout << right << setw(59) << "PRODUCT LIST" << endl;
+		cout << "\t" << left << setw(15) << "Product ID" << setw(50) << "Product Name" << setw(15) << "Price/unit" << setw(10) << "Stock Left" << endl;
 
 		res = mysql_store_result(conn);
 		while (row = mysql_fetch_row(res))
-			cout << left << setw(15) << row[0] << setw(50) << row[1] << setw(15) << row[2] << setw(10) << row[3] << endl;
+			cout << "\t" << left << setw(15) << row[0] << setw(50) << row[1] << setw(15) << row[2] << setw(10) << row[3] << endl;
 
-		cout << "\n*****5% discount for orders over RM10000*****\n\n";
+		cout << "\n\t*****5% discount for orders over RM10000*****\n\n";
 	}
 	else
 		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
 	char c;
-	cout << "Do you want to order a product? (Y/N): ";
+	cout << "\tDo you want to order a product? (Y/N): ";
 	do {
 		cin >> c;
 		cin.ignore(1000, '\n');
@@ -563,15 +599,15 @@ void PlaceOrder()
 		}
 		else if (c == 'n' || c == 'N')
 		{
-			cout << "\nReturning to main menu...\nPress enter to continue...";
+			cout << "\n\tReturning to main menu...\n\tPress enter to continue...";
 			_getch();
 			system("cls");
 			CustomerMainMenu();
 		}
 		else
 		{
-			cout << "Invalid input." << endl;
-			cout << "Please enter Y for yes or N for no: ";
+			cout << "\tInvalid input." << endl;
+			cout << "\tPlease enter Y for yes or N for no: ";
 			cout << endl;
 		}
 	} while (c != 'y' && c != 'Y' && c != 'n' && c != 'N');
@@ -580,7 +616,7 @@ void PlaceOrder()
 	do {
 		string productID;
 		int quantity, new_quantity;
-		cout << "Enter product ID: ";
+		cout << "\tEnter product ID: ";
 		cin.ignore(1, '\n');
 		getline(cin, productID);
 
@@ -603,16 +639,16 @@ void PlaceOrder()
 				do {
 					if (current_quantity == "0")
 					{
-						cout << "This product is currently out of stock.\n";
+						cout << "\tThis product is currently out of stock.\n";
 						break;
 					}
 
-					cout << "Enter quatity: ";
+					cout << "\tEnter quatity: ";
 					cin >> quantity;
 
 					if (quantity > stoi(current_quantity))
 					{
-						cout << "Invalid quantity. Please enter quantity less than or equal to " << current_quantity << ". \n";
+						cout << "\tInvalid quantity. Please enter quantity less than or equal to " << current_quantity << ". \n";
 						continue;
 					}
 					double subtotal;
@@ -638,19 +674,19 @@ void PlaceOrder()
 				} while (quantity > stoi(current_quantity));
 			}
 			else
-				cout << "Invalid product ID. Try again." << endl;
+				cout << "\tInvalid product ID. Try again." << endl;
 		}
 		else
 			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-		cout << "\nDo you want to order another product? (Y/N):";
+		cout << "\n\tDo you want to order another product? (Y/N):";
 		cin >> y;
 		cin.ignore(100, '\n');
 		
 		while (y != 'y' && y != 'Y' && y != 'n' && y != 'N')
 		{
-			cout << "Invalid input." << endl;
-			cout << "Please enter Y for yes or N for no: ";
+			cout << "\tInvalid input." << endl;
+			cout << "\tPlease enter Y for yes or N for no: ";
 			cin >> y;
 			cin.ignore(100, '\n');
 			cout << endl;
@@ -674,7 +710,7 @@ void PlaceOrder()
 			if (qstate)
 				cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-			cout << "\nReturning to main menu...\nPress enter to continue...";
+			cout << "\n\tReturning to main menu...\n\tPress enter to continue...";
 			_getch();
 			system("cls");
 			CustomerMainMenu();
@@ -690,9 +726,9 @@ void PlaceOrder()
 	//payment_status: 1-Fully paid, 2 - Partially paid, 3 - Pending, 4 - Overdue
 	do {
 		cout << endl;
-		cout << "Choose your payment method." << endl;
-		cout << "1 - Cash\n2 - Cheque\n3 - Bank-in\n4 - Credit\n";
-		cout << "Enter your choice: ";
+		cout << "\tChoose your payment method." << endl;
+		cout << "\t1 - Cash\n\t2 - Cheque\n\t3 - Bank-in\n\t4 - Credit\n";
+		cout << "\tEnter your choice: ";
 		cin >> choice;
 		//cin.ignore(1000, '\n');
 
@@ -713,7 +749,7 @@ void PlaceOrder()
 			addDue = 30;
 		}
 		else
-			cout << "Invalid input. Try again\n";
+			cout << "\tInvalid input. Try again\n";
 	} while (choice != '1' && choice != '2' && choice != '3' && choice != '4');
 
 	//string payment_duedate = getDueDate(addDue, year, month, day);
@@ -794,8 +830,10 @@ void Invoice(string orderID, string custID)
 {
 	string order_date, payment_duedate, subtotal, productID[50];
 	system("cls");
+	header();
+	cout << "\t--------------------------------------------------------------------------------------------" << endl << endl;
 	cout << right << setw(50) << "INVOICE" << endl << endl;
-	cout << left << setw(60) << "Bill to: ";
+	cout << "\t" << left << setw(60) << "Bill to: ";
 
 	string checkOrderDetail_query = "SELECT * FROM orders WHERE cust_ID = '" + custID + "' AND order_ID = '" + orderID + "'";
 	const char* checkOrderD = checkOrderDetail_query.c_str();
@@ -830,12 +868,12 @@ void Invoice(string orderID, string custID)
 	{
 		res = mysql_store_result(conn);
 		while (row = mysql_fetch_row(res))
-			cout << left << "Order ID: " << orderID << endl << setw(60) << row[1] << "Order Date: " << order_date << endl << setw(60) << row[3] << "Payment Due Date: " << payment_duedate << endl << row[4] << endl << row[5] << endl << row[6] << ", " << row[7] << endl << row[2] << endl;
+			cout << left << "Order ID: " << orderID << endl << "\t" << setw(60) << row[1] << "Order Date: " << order_date << endl << "\t" << setw(60) << row[3] << "Payment Due Date: " << payment_duedate  << endl << "\t" << row[4] << endl << "\t" << row[5] << endl << "\t" << row[6] << ", " << row[7] << endl << "\t" << row[2] << endl;
 	}
 	else
 		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-	cout << endl << left << setw(15) << "Product ID" << setw(50) << "Product Name" << setw(15) << "Price/unit" << setw(10) << "Quantity" << endl;
+	cout << endl << "\t" << left << setw(15) << "Product ID" << setw(50) << "Product Name" << setw(15) << "Price/unit" << setw(10) << "Quantity" << endl;
 
 	int i = 0;
 	string checkOrdersProduct_query = "SELECT * FROM orderdetails WHERE order_ID = '" + orderID + "'";
@@ -860,7 +898,7 @@ void Invoice(string orderID, string custID)
 		{
 			res = mysql_store_result(conn);
 			while (row = mysql_fetch_row(res))
-				cout << setw(15) << productID[j] << setw(50) << row[1] << setw(15) << row[2];
+				cout << "\t" << setw(15) << productID[j] << setw(50) << row[1] << setw(15) << row[2];
 
 			string checkProductQuantity_query = "SELECT * FROM orderdetails WHERE order_ID = '" + orderID + "' AND product_ID = '" + productID[j] + "'";
 			const char* checkPQ = checkProductQuantity_query.c_str();
@@ -889,14 +927,14 @@ void Invoice(string orderID, string custID)
 		total_amount = sub_total;
 	}
 
-	cout << "\nSubtotal: " << fixed << setprecision(2) << sub_total << endl;
-	cout << "Discount: " << fixed << setprecision(2) << discount << endl;
-	cout << "Total Amount: " << fixed << setprecision(2) << total_amount << endl;
-	cout << "\n*****Please pay before " << payment_duedate << "*****";
+	cout << "\n\tSubtotal: " << fixed << setprecision(2) << sub_total << endl;
+	cout << "\tDiscount: " << fixed << setprecision(2) << discount << endl;
+	cout << "\tTotal Amount: " << fixed << setprecision(2) << total_amount << endl;
+	cout << "\n\t*****Please pay before " << payment_duedate << "*****";
 
 	char txt;
 	do {
-		cout << "\n\nDo you want to export as text file?(Y/N): ";
+		cout << "\n\n\tDo you want to export as text file?(Y/N): ";
 		cin >> txt;
 		cin.ignore(1000, '\n');
 
@@ -1008,11 +1046,11 @@ void Invoice(string orderID, string custID)
 			cout << "\n*****Please pay before " << payment_duedate << "*****";
 
 			cout.rdbuf(cout_buff);	// go back to cout buffer
-			cout << "Successfully exported to ";
+			cout << "\tSuccessfully exported to ";
 			cout << filename << endl;
 		}
 		else if (txt != 'Y' && txt != 'y' && txt != 'N' && txt != 'n')
-			cout << "Invalid input.Try again.";
+			cout << "\tInvalid input.Try again.";
 	} while (txt != 'Y' && txt != 'y' && txt != 'N' && txt != 'n');
 
 	string totalAmount = to_string(total_amount);
@@ -1022,7 +1060,7 @@ void Invoice(string orderID, string custID)
 	if (qstate)
 		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-	cout << "\nPress enter to back to main menu...";
+	cout << "\n\tPress enter to back to main menu...";
 	_getch();
 	system("cls");
 	CustomerMainMenu();
@@ -1031,9 +1069,13 @@ void Invoice(string orderID, string custID)
 void StaffMainMenu()
 {
 	char choose;
-	cout << endl << right << setw(17) << "MAIN MENU" << endl << endl;
-	cout << "1 - View Order List\n2 - Update Order\n3 - View Defaulter List\n4 - Add Stock\n5 - View Stock Report\n0 - Log Out\n\n";
-	cout << "Enter your selection: ";
+	header();
+	cout << "\t-----------------------------------------------------------" << endl;
+	cout << "\t|       		MAIN MENU  			  |" << endl;
+	cout << "\t-----------------------------------------------------------" << endl;
+	cout << "\tPlease select an option by entering the number labelled.\n" << endl;
+	cout << "\t1 - View Order List\n\t2 - Update Order\n\t3 - View Defaulter List\n\t4 - Add Stock\n\t5 - View Stock Report\n\t0 - Log Out\n\n";
+	cout << "\tEnter your selection: ";
 	cin >> choose;
 	cin.ignore(100, '\n');
 
@@ -1053,12 +1095,12 @@ void StaffMainMenu()
 		StockReport();
 	}
 	else if (choose == '0') {
-		cout << "\nLogging out...\n";
+		cout << "\n\tLogging out...\n";
 		WelcomePage();
 		//exit(0);
 	}
 	else {
-		cout << "Invalid selection.Please try again.";
+		cout << "\tInvalid selection.Please try again.";
 		system("cls");
 		StaffMainMenu();
 	}
@@ -1067,6 +1109,7 @@ void StaffMainMenu()
 void OrderList()
 {
 	system("cls");
+	header();
 
 	string notPrepared = "1", prepared = "2";
 	string checkOrderList_query = "SELECT * FROM orders WHERE delivery_status = '" + notPrepared + "' OR delivery_status = '" + prepared + "'";
@@ -1074,15 +1117,17 @@ void OrderList()
 	qstate = mysql_query(conn, checkOL);
 	if (!qstate)
 	{
-		cout << setw(35) << "ORDER LIST" << endl << endl;
-		cout << left << setw(15) << "Order ID" << setw(15) << "Order Date" << setw(17) << "Customer ID" << setw(10) << "Delivery Status" << endl;
+		cout << "\t----------------------------------------------------------------" << endl;
+		cout << "\t|           		   ORDER LIST  			       |" << endl;
+		cout << "\t----------------------------------------------------------------" << endl << endl;
+		cout << "\t" << left << setw(15) << "Order ID" << setw(15) << "Order Date" << setw(17) << "Customer ID" << setw(10) << "Delivery Status" << endl;
 
 		res = mysql_store_result(conn);
 		while (row = mysql_fetch_row(res)) {
 			if (row[2] == notPrepared)
-				cout << left << setw(15) << row[0] << setw(15) << row[1] << setw(17) << row[5] << setw(10) << "Not prepared" << endl;
+				cout << "\t" << left << setw(15) << row[0] << setw(15) << row[1] << setw(17) << row[5] << setw(10) << "Not prepared" << endl;
 			else if (row[2] == prepared)
-				cout << left << setw(15) << row[0] << setw(15) << row[1] << setw(17) << row[5] << setw(10) << "Prepared" << endl;
+				cout << "\t" << left << setw(15) << row[0] << setw(15) << row[1] << setw(17) << row[5] << setw(10) << "Prepared" << endl;
 		}
 	}
 	else
@@ -1091,11 +1136,11 @@ void OrderList()
 	char d;
 	string orderID;
 	do {
-		cout << "\nPrint Delivery Order(DO)?  (Y/N):";
+		cout << "\n\tPrint Delivery Order(DO)?  (Y/N):";
 		cin >> d;
 		cin.ignore(100, '\n');
 		if (d == 'y' || d == 'Y') {
-			cout << "Enter order ID : ";
+			cout << "\tEnter order ID : ";
 			getline(cin, orderID);
 
 			string checkOrderid_query = "SELECT * FROM orderdetails WHERE order_ID = '" + orderID + "'";
@@ -1112,7 +1157,7 @@ void OrderList()
 					}
 				}
 				if (orderFound == false) {
-					cout << "This order is not exist. Press enter to continue..." << endl;
+					cout << "\tThis order is not exist. Press enter to continue..." << endl;
 					_getch();
 					system("cls");
 					StaffMainMenu();
@@ -1125,20 +1170,22 @@ void OrderList()
 		}
 		else if (d == 'n' || d == 'N')
 		{
-			cout << "\nReturning to Main Menu...\nPress enter to continue...";
+			cout << "\n\tReturning to Main Menu...\n\tPress enter to continue...";
 			_getch();
 			system("cls");
 			StaffMainMenu();
 		}
 		else
-			cout << "Invalid input. Try again.\n";
+			cout << "\tInvalid input. Try again.\n";
 	} while (d != 'y' && d != 'Y' && d != 'n' && d != 'N');
 }
 
 void DeliveryNote(string orderID)
 {
 	system("cls");
-	cout << right << setw(45) << "DELIVERY NOTE" << endl << endl;
+	header();
+	cout << "\t--------------------------------------------------------------------------------------------------" << endl << endl;
+	cout << "\t" << right << setw(45) << "DELIVERY NOTE" << endl << endl;
 
 	string order_date, cust_ID, productID[50];
 	string checkOrderDetail_query = "SELECT * FROM orders WHERE order_ID = '" + orderID + "'";
@@ -1160,15 +1207,15 @@ void DeliveryNote(string orderID)
 	qstate = mysql_query(conn, checkCust);
 	if (!qstate)
 	{
-		cout << left << setw(60) << "Shipping Address: ";
+		cout << "\t" << left << setw(60) << "Shipping Address: ";
 		res = mysql_store_result(conn);
 		while (row = mysql_fetch_row(res))
-			cout << left << "Order ID: " << orderID << endl << setw(60) << row[1] << "Order Date: " << order_date << endl << setw(60) << row[3] << "Delivery Date: " << today_date << endl << row[4] << endl << row[5] << endl << row[6] << ", " << row[7] << endl << row[2] << endl;
+			cout << left << "Order ID: " << orderID << endl << "\t" << setw(60) << row[1] << "Order Date: " << order_date << endl << "\t" << setw(60) << row[3] << "Delivery Date: " << today_date << endl << "\t" << row[4] << endl << "\t" << row[5] << endl << "\t" << row[6] << ", " << row[7] << endl << "\t" << row[2] << endl;
 	}
 	else
 		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-	cout << endl << left << setw(15) << "Product ID" << setw(50) << "Product Name" << setw(10) << "Quantity" << endl;
+	cout << endl << "\t" << left << setw(15) << "Product ID" << setw(50) << "Product Name" << setw(10) << "Quantity" << endl;
 
 	int i = 0;
 	string checkOrdersProduct_query = "SELECT * FROM orderdetails WHERE order_ID = '" + orderID + "'";
@@ -1193,7 +1240,7 @@ void DeliveryNote(string orderID)
 		{
 			res = mysql_store_result(conn);
 			while (row = mysql_fetch_row(res))
-				cout << setw(15) << productID[j] << setw(50) << row[1];
+				cout << "\t" << setw(15) << productID[j] << setw(50) << row[1];
 
 			string checkProductQuantity_query = "SELECT * FROM orderdetails WHERE order_ID = '" + orderID + "' AND product_ID = '" + productID[j] + "'";
 			const char* checkPQ = checkProductQuantity_query.c_str();
@@ -1213,7 +1260,7 @@ void DeliveryNote(string orderID)
 
 	char txt;
 	do {
-		cout << "\n\nDo you want to export as text file?(Y/N): ";
+		cout << "\n\n\tDo you want to export as text file?(Y/N): ";
 		cin >> txt;
 		cin.ignore(100, '\n');
 
@@ -1298,14 +1345,14 @@ void DeliveryNote(string orderID)
 			}
 
 			cout.rdbuf(cout_buff);	// go back to cout buffer
-			cout << "Successfully exported to ";
+			cout << "\tSuccessfully exported to ";
 			cout << filename << endl;
 		}
 		else if (txt != 'Y' && txt != 'y' && txt != 'N' && txt != 'n')
-			cout << "Invalid input.Try again.";
+			cout << "\tInvalid input.Try again.";
 	} while (txt != 'Y' && txt != 'y' && txt != 'N' && txt != 'n');
 
-	cout << "\nPress enter to return to Main Menu...";
+	cout << "\n\tPress enter to return to Main Menu...";
 	_getch();
 	system("cls");
 	StaffMainMenu();
@@ -1317,24 +1364,30 @@ void UpdateOrder()
 	bool orderFound = false;
 
 	system("cls");
-	cout << right << setw(20) << "UPDATE ORDER" << endl << endl;
-	cout << "1 - Update Delivery Status\n2 - Update Payment Status\n0 - Return to Main Menu\n\n";
+	header();
+	cout << "\t----------------------------------------------------------------" << endl;
+	cout << "\t|		  	   UPDATE ORDER  		       |" << endl;
+	cout << "\t----------------------------------------------------------------" << endl << endl;
+	cout << "\t1 - Update Delivery Status\n\t2 - Update Payment Status\n\t0 - Return to Main Menu\n\n";
 
 	char ch;
-	cout << "Enter your choice: ";
+	cout << "\tEnter your choice: ";
 	cin >> ch;
 	cin.ignore(1000, '\n');
 
 	if (ch == '1')
 	{
 		system("cls");
-		cout << "    UPDATE DELIVERY STATUS\n\n";
+		header();
+		cout << "\t-----------------------------------------" << endl;
+		cout << "\t|	 UPDATE DELIVERY STATUS		|" << endl;
+		cout << "\t-----------------------------------------" << endl << endl;
 
 		string ds, DS;
 		qstate = mysql_query(conn, "SELECT * FROM orders WHERE delivery_status <> '3'");
 		if (!qstate)
 		{
-			cout << left << setw(15) << "Orders" << setw(15) << "Status" << endl;
+			cout << "\t" << left << setw(15) << "Orders" << setw(15) << "Status" << endl;
 			res = mysql_store_result(conn);
 			while (row = mysql_fetch_row(res)) {
 				DS = row[2];
@@ -1342,14 +1395,13 @@ void UpdateOrder()
 					ds = "Not prepared yet";
 				else if (DS == "2")
 					ds = "Prepared";
-				cout << left << setw(15) << row[0] << setw(30) << ds << endl;
+				cout << "\t" << left << setw(15) << row[0] << setw(30) << ds << endl;
 			}
 		}
 		else
 			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-		cout << "\nEnter Order ID: ";
-		//cin.ignore(1, '\n');
+		cout << "\n\tEnter Order ID: ";
 		getline(cin, orderID);
 
 		string checkOrder_query = "SELECT * FROM orders WHERE order_ID = '" + orderID + "'";
@@ -1360,7 +1412,7 @@ void UpdateOrder()
 			res = mysql_store_result(conn);
 			if (res->row_count == 1)
 			{
-				cout << "\nDelivery Status: \n1 - Not prepared\n2 - Prepared\n3 - Delivered\nUpdate the delivery status to: ";
+				cout << "\n\tDelivery Status: \n\t1 - Not prepared\n\t2 - Prepared\n\t3 - Delivered\n\tUpdate the delivery status to: ";
 				cin >> new_delivery_status;
 
 				do {
@@ -1373,8 +1425,8 @@ void UpdateOrder()
 							cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 						else
 						{
-							cout << "\nSuccessfully updated.\n";
-							cout << "Press enter to return to Main Menu...";
+							cout << "\n\tSuccessfully updated.\n";
+							cout << "\tPress enter to return to Main Menu...";
 							_getch();
 							system("cls");
 							StaffMainMenu();
@@ -1382,14 +1434,14 @@ void UpdateOrder()
 					}
 					else
 					{
-						cout << "Invalid input. \nPress enter to try again...\n";
+						cout << "\tInvalid input. \n\tPress enter to try again...\n";
 						_getch();
 						UpdateOrder();
 					}
 				} while (new_delivery_status != "1" && new_delivery_status != "2" && new_delivery_status != "3");
 			}
 			else {
-				cout << "This order is not exist. Press enter to try again..." << endl;
+				cout << "\tThis order is not exist. Press enter to try again..." << endl;
 				_getch();
 				UpdateOrder();
 			}
@@ -1400,7 +1452,10 @@ void UpdateOrder()
 	else if (ch == '2')
 	{
 		system("cls");
-		cout << "\t    UPDATE PAYMENT STATUS\n\n";
+		header();
+		cout << "\t---------------------------------------------------------" << endl;
+		cout << "\t|		 UPDATE PAYMENT STATUS			|" << endl;
+		cout << "\t---------------------------------------------------------" << endl << endl;
 
 		string ps, PS, amount_paid, amount[1000];
 		double amount_unpaid[1000], amounts[1000];
@@ -1423,7 +1478,7 @@ void UpdateOrder()
 		qstate = mysql_query(conn, "SELECT * FROM paymentdetails WHERE payment_status <> '1'");
 		if (!qstate)
 		{
-			cout << left << setw(15) << "Orders" << setw(20) << "Status" << setw(15) << "Amount Unpaid" << endl;
+			cout << "\t" << left << setw(15) << "Orders" << setw(20) << "Status" << setw(15) << "Amount Unpaid" << endl;
 			res = mysql_store_result(conn);
 			while (row = mysql_fetch_row(res)) {
 				PS = row[2];
@@ -1435,7 +1490,7 @@ void UpdateOrder()
 					ps = "Pending";
 				else if (PS == "4")
 					ps = "Overdue";
-				cout << left << setw(15) << row[6] << setw(20) << ps << setw(15) << fixed << setprecision(2) << amount_unpaid[j] << endl;
+				cout << "\t" << left << setw(15) << row[6] << setw(20) << ps << setw(15) << fixed << setprecision(2) << amount_unpaid[j] << endl;
 				j++;
 			}
 		}
@@ -1443,7 +1498,7 @@ void UpdateOrder()
 			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
 		cout << endl;
-		cout << "Enter Order ID: ";
+		cout << "\tEnter Order ID: ";
 		//cin.ignore(1, '\n');
 		getline(cin, orderID);
 
@@ -1458,7 +1513,7 @@ void UpdateOrder()
 			{
 				row = mysql_fetch_row(res);
 				total_amount = row[4];
-				cout << "\nPayment Status: \n1 - Fully paid\n2 - Partially paid\nUpdate the payment status to: ";
+				cout << "\n\tPayment Status: \n\t1 - Fully paid\n\t2 - Partially paid\n\tUpdate the payment status to: ";
 				cin >> new_payment_status;
 
 				do {
@@ -1524,7 +1579,7 @@ void UpdateOrder()
 							}
 							else
 							{
-								cout << "Enter amount paid: RM ";
+								cout << "\tEnter amount paid: RM ";
 								cin >> paid_amount;
 								new_paid_amount = paid_amount + stod(amountPaid);
 								newDebt = stod(debt) - paid_amount;
@@ -1543,8 +1598,8 @@ void UpdateOrder()
 									cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 							}
 
-							cout << "\nSuccessfully updated.\n";
-							cout << "Press enter to return to Main Menu...";
+							cout << "\n\tSuccessfully updated.\n";
+							cout << "\tPress enter to return to Main Menu...";
 							_getch();
 							system("cls");
 							StaffMainMenu();
@@ -1552,14 +1607,14 @@ void UpdateOrder()
 					}
 					else
 					{
-						cout << "Invalid input. \nPress enter to try again...\n";
+						cout << "\tInvalid input. \n\tPress enter to try again...\n";
 						_getch();
 						UpdateOrder();
 					}
 				} while (new_payment_status != "1" && new_payment_status != "2");
 			}
 			else {
-				cout << "\nThis order is not exist. \nPress enter to try again..." << endl;
+				cout << "\n\tThis order is not exist. \n\tPress enter to try again..." << endl;
 				_getch();
 				UpdateOrder();
 			}
@@ -1569,14 +1624,14 @@ void UpdateOrder()
 	}
 	else if (ch == '0')
 	{
-		cout << "\nReturning to Main Menu...\nPress enter to continue...\n";
+		cout << "\n\tReturning to Main Menu...\n\tPress enter to continue...\n";
 		_getch();
 		system("cls");
 		StaffMainMenu();
 	}
 	else
 	{
-		cout << "Invalid choice. Press enter to try again." << endl;
+		cout << "\tInvalid choice. Press enter to try again." << endl;
 		_getch();
 		UpdateOrder();
 	}
@@ -1585,21 +1640,25 @@ void UpdateOrder()
 void DefaulterList()
 {
 	system("cls");
-	cout << right << setw(50) << "DEFAULTER LIST" << endl << endl;
+	header();
+	cout << "\t---------------------------------------------------------------------------------------" << endl;
+	cout << "\t|			 	   DEFAULTER LIST  				      |" << endl;
+	cout << "\t---------------------------------------------------------------------------------------" << endl << endl;
+	
 
 	string checkOverdue_query = "SELECT * FROM customer WHERE cust_ID IN (SELECT cust_ID FROM orders WHERE order_ID IN (SELECT order_ID FROM paymentdetails WHERE payment_status = 4))";
 	const char* checkOverdue = checkOverdue_query.c_str();
 	qstate = mysql_query(conn, checkOverdue);
 	if (!qstate)
 	{
-		cout << left << setw(15) << "Customer ID" << setw(25) << "Customer Name" << setw(20) << "Customer Tel No." << setw(25) << "Customer's Debt Amount(RM)" << endl;
+		cout << "\t" << left << setw(15) << "Customer ID" << setw(25) << "Customer Name" << setw(20) << "Customer Tel No." << setw(25) << "Customer's Debt Amount(RM)" << endl;
 		res = mysql_store_result(conn);
 		while (row = mysql_fetch_row(res))
-			cout << left << setw(15) << row[0] << setw(25) << row[1] << setw(20) << row[2] << setw(25) << fixed << setprecision(2) << right << row[8] << endl;
+			cout << "\t" << left << setw(15) << row[0] << setw(25) << row[1] << setw(20) << row[2] << setw(25) << fixed << setprecision(2) << right << row[8] << endl;
 
 		char txt;
 		do {
-			cout << "\n\nDo you want to export as text file?(Y/N): ";
+			cout << "\n\n\tDo you want to export as text file?(Y/N): ";
 			cin >> txt;
 			cin.ignore(100, '\n');
 
@@ -1626,14 +1685,14 @@ void DefaulterList()
 					cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
 				cout.rdbuf(cout_buff);	// go back to cout buffer
-				cout << "Successfully exported to ";
+				cout << "\tSuccessfully exported to ";
 				cout << filename << endl;
 			}
 			else if (txt != 'Y' && txt != 'y' && txt != 'N' && txt != 'n')
-				cout << "Invalid input.Try again.";
+				cout << "\tInvalid input.Try again.";
 		} while (txt != 'Y' && txt != 'y' && txt != 'N' && txt != 'n');
 
-		cout << "\nPress enter to return to Main Menu....";
+		cout << "\n\tPress enter to return to Main Menu....";
 		_getch();
 		system("cls");
 		StaffMainMenu();
@@ -1645,17 +1704,19 @@ void DefaulterList()
 void AddStock()
 {
 	system("cls");
-	cout << right << setw(43) << "ADD STOCK" << endl << endl;
+	header();
+	cout << "\t----------------------------------------------------------------------------" << endl;
+	cout << "\t|			   	  ADD STOCK 				   |" << endl;
+	cout << "\t----------------------------------------------------------------------------" << endl << endl;
 
 	qstate = mysql_query(conn, "SELECT * FROM product");
 	if (!qstate)
 	{
-		cout << setw(45) << "PRODUCT LIST" << endl;
-		cout << left << setw(15) << "Product ID" << setw(50) << "Product Name" << setw(10) << "Stock Left" << endl;
+		cout << "\t" << left << setw(15) << "Product ID" << setw(50) << "Product Name" << setw(10) << "Stock Left" << endl;
 
 		res = mysql_store_result(conn);
 		while (row = mysql_fetch_row(res))
-			cout << left << setw(15) << row[0] << setw(50) << row[1] << setw(10) << row[3] << endl;
+			cout << "\t" << left << setw(15) << row[0] << setw(50) << row[1] << setw(10) << row[3] << endl;
 	}
 	else
 		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
@@ -1666,7 +1727,7 @@ void AddStock()
 	char f;
 
 	do {
-		cout << "Enter product ID: ";
+		cout << "\tEnter product ID: ";
 		cin.ignore(1, '\n');
 		getline(cin, productID);
 
@@ -1678,12 +1739,12 @@ void AddStock()
 			res = mysql_store_result(conn);
 			if (res->row_count == 0)
 			{
-				cout << "This product does not exist.\n";
+				cout << "\tThis product does not exist.\n";
 			}
 			while (row = mysql_fetch_row(res))
 			{
 				current_quantity = row[3];
-				cout << "Enter the replenishment quantity: ";
+				cout << "\tEnter the replenishment quantity: ";
 				cin >> quantity;
 				add_quantity = stoi(current_quantity) + quantity;
 
@@ -1694,20 +1755,20 @@ void AddStock()
 				if (qstate)
 					cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 				else
-					cout << "Successfully restock!\n";
+					cout << "\tSuccessfully restock!\n";
 			}
 		}
 		else
 			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
 		do {
-			cout << "Continue?(Y/N): ";
+			cout << "\tContinue?(Y/N): ";
 			cin >> f;
 			cin.ignore(100, '\n');
 
 			if (f == 'n' || f == 'N')
 			{
-				cout << "\nPress enter to return to Main Menu....";
+				cout << "\n\tPress enter to return to Main Menu....";
 				_getch();
 				system("cls");
 				StaffMainMenu();
@@ -1715,7 +1776,7 @@ void AddStock()
 			}
 
 			if (f != 'n' && f != 'N' && f != 'y' && f != 'Y')
-				cout << "Invalid input. Try again.\n";
+				cout << "\tInvalid input. Try again.\n";
 
 		} while (f != 'n' && f != 'N' && f != 'y' && f != 'Y');
 		cout << endl;
@@ -1751,18 +1812,20 @@ void AddStock()
 void StockReport()
 {
 	system("cls");
-	cout << right << setw(45) << "STOCK REPORT\n";
-	cout << right << setw(37) << "DATE: " << today_date << endl << endl;
+	header();
+	cout << "\t------------------------------------------------------------------------------------" << endl;
+	cout << "\t|			   	   STOCK REPORT					   |" << endl;
+	cout << "\t------------------------------------------------------------------------------------" << endl;
+	cout << "\t 			   	 " << "DATE: " << today_date << " 				    " << endl <<endl;
 
 	qstate = mysql_query(conn, "SELECT * FROM product");
 	if (!qstate)
 	{
-		cout << setw(45) << "PRODUCT LIST" << endl;
-		cout << left << setw(15) << "Product ID" << setw(50) << "Product Name" << setw(10) << "Stock Left" << endl;
+		cout << "\t" << left << setw(15) << "Product ID" << setw(50) << "Product Name" << setw(10) << "Stock Left" << endl;
 
 		res = mysql_store_result(conn);
 		while (row = mysql_fetch_row(res))
-			cout << left << setw(15) << row[0] << setw(50) << row[1] << setw(10) << row[3] << endl;
+			cout << "\t" << left << setw(15) << row[0] << setw(50) << row[1] << setw(10) << row[3] << endl;
 	}
 	else
 		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
@@ -1773,9 +1836,9 @@ void StockReport()
 		string quantity, reorder_level;
 		int qty, rl;
 
-		cout << "\n\n********STOCK REMINDER********\n\n";
-		cout << "Items that need replenishment:\n";
-		cout << left << setw(15) << "Product ID" << setw(50) << "Product Name" << endl;
+		cout << "\n\n\t********STOCK REMINDER********\n";
+		cout << "\tItems that need replenishment:\n\n";
+		cout << "\t" << left << setw(15) << "Product ID" << setw(50) << "Product Name" << endl;
 
 		res = mysql_store_result(conn);
 		while (row = mysql_fetch_row(res))
@@ -1786,7 +1849,7 @@ void StockReport()
 			rl = stoi(reorder_level);
 
 			if (qty < rl)
-				cout << left << setw(15) << row[0] << setw(50) << row[1] << endl;
+				cout << "\t" << left << setw(15) << row[0] << setw(50) << row[1] << endl;
 		}
 	}
 	else
@@ -1794,7 +1857,7 @@ void StockReport()
 
 	char txt;
 	do {
-		cout << "\nDo you want to export as text file?(Y/N): ";
+		cout << "\n\tDo you want to export as text file?(Y/N): ";
 		cin >> txt;
 		cin.ignore(1000, '\n');
 
@@ -1811,8 +1874,7 @@ void StockReport()
 			qstate = mysql_query(conn, "SELECT * FROM product");
 			if (!qstate)
 			{
-				cout << setw(45) << "PRODUCT LIST" << endl;
-				cout << left << setw(15) << "Product ID" << setw(50) << "Product Name" << setw(10) << "Stock Left" << endl;
+				cout << left << setw(15) << "Product ID" << setw(50) << "Product Name" << setw(10) << "Stock Left(carton)" << endl;
 
 				res = mysql_store_result(conn);
 				while (row = mysql_fetch_row(res))
@@ -1827,8 +1889,8 @@ void StockReport()
 				string quantity, reorder_level;
 				int qty, rl;
 
-				cout << "\n\n********STOCK REMINDER********\n\n";
-				cout << "Items that need replenishment:\n";
+				cout << "\n\n********STOCK REMINDER********\n";
+				cout << "Items that need replenishment:\n\n";
 				cout << left << setw(15) << "Product ID" << setw(50) << "Product Name" << endl;
 
 				res = mysql_store_result(conn);
@@ -1847,11 +1909,11 @@ void StockReport()
 				cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
 			cout.rdbuf(cout_buff);	// go back to cout buffer
-			cout << "Successfully exported to ";
+			cout << "\tSuccessfully exported to ";
 			cout << filename << endl;
 		}
 		else if (txt != 'Y' && txt != 'y' && txt != 'N' && txt != 'n')
-			cout << "Invalid input.Try again.\n";
+			cout << "\tInvalid input.Try again.\n";
 	} while (txt != 'Y' && txt != 'y' && txt != 'N' && txt != 'n');
 
 	string position;
@@ -1867,7 +1929,7 @@ void StockReport()
 	else
 		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-	cout << "\nPress enter to return to Main Menu....";
+	cout << "\n\tPress enter to return to Main Menu....";
 	_getch();
 	system("cls");
 	if (position == "S")
@@ -1879,9 +1941,13 @@ void StockReport()
 void AdminMainMenu()
 {
 	char choices;
-	cout << endl << right << setw(15) << "MAIN MENU" << endl << endl;
-	cout << "1 - Add New Product\n2 - Add Staff\n3 - Remove Staff\n4 - View Customer List\n5 - View Stock Report\n6 - View Sales Report\n0 - Log Out\n\n";
-	cout << "Enter your selection: ";
+	header();
+	cout << "\t-----------------------------------------------------------" << endl;
+	cout << "\t|       		MAIN MENU  			  |" << endl;
+	cout << "\t-----------------------------------------------------------" << endl;
+	cout << "\tPlease select an option by entering the number labelled.\n" << endl;
+	cout << "\t1 - Add New Product\n\t2 - Add Staff\n\t3 - Remove Staff\n\t4 - View Customer List\n\t5 - View Stock Report\n\t6 - View Sales Report\n\t0 - Log Out\n\n";
+	cout << "\tEnter your selection: ";
 	cin >> choices;
 	cin.ignore(100, '\n');
 
@@ -1904,12 +1970,12 @@ void AdminMainMenu()
 		SalesReport();
 	}
 	else if (choices == '0') {
-		cout << "\nLogging out...\n";
+		cout << "\n\tLogging out...\n";
 		WelcomePage();
 		//exit(0);
 	}
 	else {
-		cout << "Invalid selection.Please try again.";
+		cout << "\tInvalid selection.Please try again.";
 		system("cls");
 		AdminMainMenu();
 	}
@@ -1918,7 +1984,10 @@ void AdminMainMenu()
 void AddNewProduct()
 {
 	system("cls");
-	cout << right << setw(36) << "ADD NEW PRODUCT" << endl << endl;
+	header();
+	cout << "\t-----------------------------------------------------" << endl;
+	cout << "\t|		    ADD NEW PRODUCT		    |" << endl;
+	cout << "\t-----------------------------------------------------" << endl << endl;
 	string productID, product_name, price, reorder_level;
 
 	bool allNotEmpty = false;
@@ -1926,28 +1995,28 @@ void AddNewProduct()
 
 	do {
 		do {
-			cout << "Enter product name: ";
+			cout << "\tEnter product name: ";
 			//cin.ignore(1, '\n');
 			getline(cin, product_name);
 
 			if (product_name.empty())
-				cout << "Do not leave blank.\n";
+				cout << "\tDo not leave blank.\n";
 		} while (product_name.empty());
 
 		do {
-			cout << "Set price per unit: ";
+			cout << "\tSet price per unit: RM";
 			getline(cin, price);
 
 			if (price.empty())
-				cout << "Do not leave blank.\n";
+				cout << "\tDo not leave blank.\n";
 		} while (price.empty());
 
 		do {
-			cout << "Set reorder level: ";
+			cout << "\tSet reorder level(carton): ";
 			getline(cin, reorder_level);
 
 			if (reorder_level.empty())
-				cout << "Do not leave blank.\n";
+				cout << "\tDo not leave blank.\n";
 			else
 				allNotEmpty = true;
 
@@ -1970,17 +2039,17 @@ void AddNewProduct()
 				{
 					res = mysql_store_result(conn);
 					while (row = mysql_fetch_row(res))
-						cout << "\nNew product successfully added! The product ID is " << row[0];
+						cout << "\n\tNew product successfully added! The product ID is " << row[0];
 
 					do {
-						cout << "\nIs there another new product? (Y/N): ";
+						cout << "\n\tIs there another new product? (Y/N): ";
 						cin >> np;
 						cin.ignore(100, '\n');
 
 						if (np != 'y' && np != 'Y' && np != 'n' && np != 'N')
-							cout << "Invalid input.";
+							cout << "\tInvalid input.";
 						if (np == 'n' || np == 'N') {
-							cout << "\nPress enter to return to Main Menu....";
+							cout << "\n\tPress enter to return to Main Menu....";
 							_getch();
 							system("cls");
 							AdminMainMenu();
@@ -1998,13 +2067,16 @@ void AddNewProduct()
 void AddNewStaff()
 {
 	system("cls");
-	cout << setw(35) << "ADD NEW STAFF" << endl << endl;
+	header();
+	cout << "\t---------------------------------------------------------------------" << endl;
+	cout << "\t|			    ADD NEW STAFF			    |" << endl;
+	cout << "\t---------------------------------------------------------------------" << endl << endl;
 
 	string access_type, s_name, s_tel, s_add1, s_add2, s_area, s_postcode, s_state, username, password, password2, userID;
 
-	cout << "Please fill in the details to register a new staff." << endl << endl;
+	cout << "\tPlease fill in the details to register a new staff." << endl << endl;
 	do {
-		cout << "Register as? (S-Staff, A-Administrator): ";
+		cout << "\tRegister as? (S-Staff, A-Administrator): ";
 		getline(cin, access_type);
 
 		if (access_type == "s")
@@ -2012,94 +2084,94 @@ void AddNewStaff()
 		if (access_type == "a")
 			access_type = "A";
 		if (access_type.empty())
-			cout << "Do not leave blank.\n";
+			cout << "\tDo not leave blank.\n";
 
 		if (access_type != "S" && access_type != "A" && access_type != "s" && access_type != "A" && !access_type.empty())
-			cout << "Invalid input.Try again.\n";
+			cout << "\tInvalid input.Try again.\n";
 	} while (access_type.empty() || (access_type != "S" && access_type != "A" && access_type != "s" && access_type != "A"));
 
 	do {
-		cout << "Name: ";
+		cout << "\tName: ";
 		//cin.ignore(1, '\n');
 		getline(cin, s_name);
 
 		if (s_name.empty())
-			cout << "Do not leave blank.\n";
+			cout << "\tDo not leave blank.\n";
 	} while (s_name.empty());
 
 	do {
-		cout << "Contact number: ";
+		cout << "\tContact number: ";
 		getline(cin, s_tel);
 
 		if (s_tel.empty())
-			cout << "Do not leave blank.\n";
+			cout << "\tDo not leave blank.\n";
 	} while (s_tel.empty());
 
 	do {
-		cout << "Address: ";
+		cout << "\tAddress: ";
 		getline(cin, s_add1);
 
 		if (s_add1.empty())
-			cout << "Do not leave blank.\n";
+			cout << "\tDo not leave blank.\n";
 	} while (s_add1.empty());
 
-	cout << "Address 2: ";
+	cout << "\tAddress 2: ";
 	getline(cin, s_add2);
 
 	do {
-		cout << "Area: ";
+		cout << "\tArea: ";
 		getline(cin, s_area);
 
 		if (s_area.empty())
-			cout << "Do not leave blank.\n";
+			cout << "\tDo not leave blank.\n";
 	} while (s_area.empty());
 
 	do {
-		cout << "Postcode: ";
+		cout << "\tPostcode: ";
 		getline(cin, s_postcode);
 
 		if (s_postcode.length() != 5)
-			cout << "Please follow Malaysia's postcode format. Try again.\n";
+			cout << "\tPlease follow Malaysia's postcode format. Try again.\n";
 
 		if (s_postcode.empty())
-			cout << "Do not leave blank.\n";
+			cout << "\tDo not leave blank.\n";
 	} while (s_postcode.empty() || s_postcode.length() != 5);
 
 	do {
-		cout << "State: ";
+		cout << "\tState: ";
 		getline(cin, s_state);
 
 		if (s_state.empty())
-			cout << "Do not leave blank.\n";
+			cout << "\tDo not leave blank.\n";
 	} while (s_state.empty());
 
 	do {
-		cout << "Username: ";
+		cout << "\tUsername: ";
 		getline(cin, username);
 
 		if (username.empty())
-			cout << "Do not leave blank.\n";
+			cout << "\tDo not leave blank.\n";
 	} while (username.empty());
 
 	do {
 		do {
-			cout << "Password: ";
+			cout << "\tPassword: ";
 			getline(cin, password);
 
 			if (password.empty())
-				cout << "Do not leave blank.\n";
+				cout << "\tDo not leave blank.\n";
 		} while (password.empty());
 
 		do {
-			cout << "Re-enter password: ";
+			cout << "\tRe-enter password: ";
 			getline(cin, password2);
 
 			if (password2.empty())
-				cout << "Do not leave blank.\n";
+				cout << "\tDo not leave blank.\n";
 		} while (password2.empty());
 
 		if (password != password2)
-			cout << "Please enter the same password to verify. Try again.\n";
+			cout << "\tPlease enter the same password to verify. Try again.\n";
 	} while (password != password2);
 
 	string insertNewStaffAcc_query = "INSERT INTO useraccount (username, password, access_type) values ('" + username + "', '" + password + "', '" + access_type + "')";
@@ -2129,10 +2201,10 @@ void AddNewStaff()
 
 		if (!qstate)
 		{
-			cout << endl << "New staff successfully added!\n";
-			cout << "New staff's user ID is " << userID << ".\n";
-			cout << "New staff can login the system with this user ID and password.\n";
-			cout << "\nPress enter to return to Main Menu...";
+			cout << endl << "\tNew staff successfully added!\n";
+			cout << "\tNew staff's user ID is " << userID << ".\n";
+			cout << "\tNew staff can login the system with this user ID and password.\n";
+			cout << "\n\tPress enter to return to Main Menu...";
 			getch();
 			system("cls");
 			AdminMainMenu();
@@ -2145,19 +2217,21 @@ void AddNewStaff()
 void RemoveStaff()
 {
 	system("cls");
-	cout << setw(15) << "REMOVE STAFF" << endl << endl;
+	header();
+	cout << "\t-----------------------------------------------------" << endl;
+	cout << "\t|		    REMOVE STAFF		    |" << endl;
+	cout << "\t-----------------------------------------------------" << endl << endl;
 
 	string staffID, staff_name, userID;
 
 	qstate = mysql_query(conn, "SELECT staff_ID, staff_name FROM staff");
 	if (!qstate)
 	{
-		cout << setw(15) << "STAFF LIST" << endl;
-		cout << left << setw(15) << "StaffID" << setw(50) << "Name" << endl;
+		cout << "\t" << left << setw(15) << "StaffID" << setw(50) << "Name" << endl;
 
 		res = mysql_store_result(conn);
 		while (row = mysql_fetch_row(res))
-			cout << left << setw(15) << row[0] << setw(50) << row[1] << endl;
+			cout << "\t" << left << setw(15) << row[0] << setw(50) << row[1] << endl;
 	}
 	else
 		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
@@ -2169,8 +2243,8 @@ void RemoveStaff()
 		{
 			res = mysql_store_result(conn);
 			if (res->row_count == 0) {
-				cout << "No staff to be removed.\n";
-				cout << "\nPress enter to back to Main Menu...";
+				cout << "\tNo staff to be removed.\n";
+				cout << "\n\tPress enter to back to Main Menu...";
 				_getch();
 				system("cls");
 				AdminMainMenu();
@@ -2179,7 +2253,7 @@ void RemoveStaff()
 		else
 			cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-		cout << "\nEnter staff ID: ";
+		cout << "\n\tEnter staff ID: ";
 		cin.ignore(1, '\n');
 		getline(cin, staffID);
 
@@ -2194,13 +2268,13 @@ void RemoveStaff()
 			{
 				do
 				{
-					cout << "This staff ID is not valid.";
-					cout << "\nContinue? (Y/N): ";
+					cout << "\tThis staff ID is not valid.";
+					cout << "\n\tContinue? (Y/N): ";
 					cin >> p;
 					cin.ignore(100, '\n');
 					if (p == 'n' || p == 'N')
 					{
-						cout << "\nPress enter to back to Main Menu...";
+						cout << "\n\tPress enter to back to Main Menu...";
 						_getch();
 						system("cls");
 						AdminMainMenu();
@@ -2208,7 +2282,7 @@ void RemoveStaff()
 					else if (p == 'y' || p == 'Y')
 						continue;
 					else
-						cout << "Invalid input.\n\n";
+						cout << "\tInvalid input.\n\n";
 				} while (p != 'y' && p != 'Y' && p != 'n' && p != 'N');
 			}
 
@@ -2218,7 +2292,7 @@ void RemoveStaff()
 			}
 			char r;
 			do {
-				cout << "Are you sure you want to remove " << staff_name << " ? (Y/N):";
+				cout << "\tAre you sure you want to remove " << staff_name << " ? (Y/N):";
 				cin >> r;
 				cin.ignore(100, '\n');
 				if (r == 'y' || r == 'Y')
@@ -2237,24 +2311,24 @@ void RemoveStaff()
 					if (qstate)
 						cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 					else
-						cout << "Staff remomved.\n";
+						cout << "\tStaff remomved.\n";
 				}
 				else if (r == 'n' || r == 'N')
 				{
-					cout << "Operation cancelled.\n";
+					cout << "\tOperation cancelled.\n";
 					break;
 				}
 				else
-					cout << "Invalid input. Try again.\n";
+					cout << "\tInvalid input. Try again.\n";
 			} while (r != 'y' && r != 'Y' && r != 'n' && r != 'N');
 
 			do {
-				cout << "\nContinue? (Y/N): ";
+				cout << "\n\tContinue? (Y/N): ";
 				cin >> p;
 				cin.ignore(100, '\n');
 				if (p == 'n' || p == 'N')
 				{
-					cout << "\nPress enter to back to Main Menu...";
+					cout << "\n\tPress enter to back to Main Menu...";
 					_getch();
 					system("cls");
 					AdminMainMenu();
@@ -2262,7 +2336,7 @@ void RemoveStaff()
 				else if (p == 'y' || p == 'Y')
 					continue;
 				else
-					cout << "Invalid input.\n";
+					cout << "\tInvalid input.\n";
 			} while (p != 'y' && p != 'Y' && p != 'n' && p != 'N');
 		}
 		else
@@ -2273,16 +2347,19 @@ void RemoveStaff()
 void CustomerList()
 {
 	system("cls");
-	cout << setw(50) << "CUSTOMER LIST" << endl << endl;
+	header();
+	cout << "\t-------------------------------------------------------------------------------------------" << endl;
+	cout << "\t|				        CUSTOMER LIST				          |" << endl;
+	cout << "\t-------------------------------------------------------------------------------------------" << endl << endl;
 
 	qstate = mysql_query(conn, "SELECT * FROM customer");
 	if (!qstate)
 	{
-		cout << left << setw(15) << "Customer ID" << setw(35) << "Customer Name" << setw(20) << "Customer Tel." << setw(15) << "Customer Debt Amount" << endl;
+		cout <<"\t" << left << setw(15) << "Customer ID" << setw(35) << "Customer Name" << setw(20) << "Customer Tel." << setw(15) << "Customer Debt Amount" << endl;
 
 		res = mysql_store_result(conn);
 		while (row = mysql_fetch_row(res))
-			cout << left << setw(15) << row[0] << setw(35) << row[1] << setw(20) << row[2] << setw(15) << row[8] << endl;
+			cout << "\t" << left << setw(15) << row[0] << setw(35) << row[1] << setw(20) << row[2] << setw(15) << row[8] << endl;
 	}
 	else
 		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
@@ -2290,7 +2367,7 @@ void CustomerList()
 
 	char txt;
 	do {
-		cout << "\n\nDo you want to export as text file?(Y/N): ";
+		cout << "\n\n\tDo you want to export as text file?(Y/N): ";
 		cin >> txt;
 		cin.ignore(100, '\n');
 
@@ -2315,14 +2392,14 @@ void CustomerList()
 			else
 				cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 			cout.rdbuf(cout_buff);	// go back to cout buffer
-			cout << "Successfully exported to ";
+			cout << "\tSuccessfully exported to ";
 			cout << filename << endl;
 		}
 		else if (txt != 'Y' && txt != 'y' && txt != 'N' && txt != 'n')
-			cout << "Invalid input.Try again.";
+			cout << "\tInvalid input.Try again.";
 	} while (txt != 'Y' && txt != 'y' && txt != 'N' && txt != 'n');
 
-	cout << "\nPress enter to back to Main Menu...";
+	cout << "\n\tPress enter to back to Main Menu...";
 	_getch();
 	system("cls");
 	AdminMainMenu();
@@ -2331,7 +2408,10 @@ void CustomerList()
 void SalesReport()
 {
 	system("cls");
-	cout << setw(15) << "SALES REPORT" << endl << endl;
+	header();
+	cout << "\t-----------------------------------------------------" << endl;
+	cout << "\t|		    SALES REPORT		    |" << endl;
+	cout << "\t-----------------------------------------------------" << endl << endl;
 
 	char sr;
 	string date;
@@ -2339,23 +2419,23 @@ void SalesReport()
 	string g_productID[1000];
 	int g_quantity[1000] = { 0 };
 
-	cout << setw(15) << "1 - By Date\n";
-	cout << setw(16) << "2 - By Month\n";
-	cout << setw(15) << "3 - By Year\n";
+	cout << setw(15) << "\t1 - By Date\n";
+	cout << setw(16) << "\t2 - By Month\n";
+	cout << setw(15) << "\t3 - By Year\n";
 
 	do {
-		cout << "\nEnter your choice: ";
+		cout << "\n\tEnter your choice: ";
 		cin >> sr;
 		cin.ignore(1000, '\n');
 
 		if (sr == '1')
-			cout << "Enter the date(YYYY-MM-DD): ";
+			cout << "\tEnter the date(YYYY-MM-DD): ";
 		else if (sr == '2')
-			cout << "Enter the year and month(YYYY-MM): ";
+			cout << "\tEnter the year and month(YYYY-MM): ";
 		else if (sr == '3')
-			cout << "Enter the year(YYYY): ";
+			cout << "\tEnter the year(YYYY): ";
 		else
-			cout << "Invalid input. Try again.";
+			cout << "\tInvalid input. Try again.";
 
 	} while (sr != '1' && sr != '2' && sr != '3');
 
@@ -2371,8 +2451,8 @@ void SalesReport()
 		res = mysql_store_result(conn);
 
 		if (res->row_count == 0) {
-			cout << "Sales report for this date is not available.\n";
-			cout << "\nPress enter to back to Main Menu...";
+			cout << "\tSales report for this date is not available.\n";
+			cout << "\n\tPress enter to back to Main Menu...";
 			_getch();
 			system("cls");
 			AdminMainMenu();
@@ -2407,9 +2487,11 @@ void SalesReport()
 
 			string quantity = "0";
 			system("cls");
-			cout << "\t\t\t\tSALES REPORT " << endl;
-			cout << "\t\t\t\t " << date << endl << endl;
-			cout << left << setw(15) << "Product ID" << setw(45) << "Product Name" << setw(20) << "Quantity Sold" << endl;
+			header();
+			cout << "\t----------------------------------------------------------------------------" << endl << endl;
+			cout << "\t\t\t\t\tSALES REPORT " << endl;
+			cout << "\t\t\t\t\t " << date << endl << endl;
+			cout << "\t" << left << setw(15) << "Product ID" << setw(45) << "Product Name" << setw(20) << "Quantity Sold" << endl;
 			string checkPN_query = "SELECT * FROM product";
 			const char* checkPN = checkPN_query.c_str();
 			qstate = mysql_query(conn, checkPN);
@@ -2424,7 +2506,7 @@ void SalesReport()
 							quantity = to_string(g_quantity[b]);
 					}
 
-					cout << left << setw(15) << row[0] << setw(45) << row[1] << setw(20) << quantity << endl;
+					cout << "\t" << left << setw(15) << row[0] << setw(45) << row[1] << setw(20) << quantity << endl;
 
 					quantity = "0";
 				}
@@ -2448,7 +2530,7 @@ void SalesReport()
 			}
 			else
 				cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
-			cout << "\nTotal Aamount Earned for " << date << " = RM " << fixed << setprecision(2) << total << endl;
+			cout << "\n\tTotal Aamount Earned for " << date << " = RM " << fixed << setprecision(2) << total << endl;
 
 			int temp;
 			string temp2;
@@ -2469,7 +2551,7 @@ void SalesReport()
 				}
 			}
 
-			cout << "\nTOP 5 SELLING BEVERAGES" << endl;
+			cout << "\n\tTOP 5 SELLING BEVERAGES" << endl;
 			for (int e = 0; e < 5; e++)
 			{
 				string checkT5_query = "SELECT * FROM product WHERE product_ID = '" + g_productID[e] + "'";
@@ -2479,7 +2561,7 @@ void SalesReport()
 				{
 					res = mysql_store_result(conn);
 					while (row = mysql_fetch_row(res))
-						cout << e + 1 << ". " << row[1] << endl;
+						cout << "\t" << e + 1 << ". " << row[1] << endl;
 				}
 				else
 					cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
@@ -2487,7 +2569,7 @@ void SalesReport()
 
 			char txt;
 			do {
-				cout << "\n\nDo you want to export as text file?(Y/N): ";
+				cout << "\n\n\tDo you want to export as text file?(Y/N): ";
 				cin >> txt;
 				cin.ignore(100, '\n');
 
@@ -2576,11 +2658,11 @@ void SalesReport()
 							cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 					}
 					cout.rdbuf(cout_buff);	// go back to cout buffer
-					cout << "Successfully exported to ";
+					cout << "\tSuccessfully exported to ";
 					cout << filename << endl;
 				}
 				else if (txt != 'Y' && txt != 'y' && txt != 'N' && txt != 'n')
-					cout << "Invalid input.Try again.";
+					cout << "\tInvalid input.Try again.";
 
 			} while (txt != 'Y' && txt != 'y' && txt != 'N' && txt != 'n');
 		}
@@ -2588,15 +2670,13 @@ void SalesReport()
 	else
 	cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-	cout << "\nPress enter to back to Main Menu...";
+	cout << "\n\tPress enter to back to Main Menu...";
 	_getch();
 	system("cls");
 	AdminMainMenu();
 }
 
 int main() {
-	//system("cls");
-	//system("title My Project");
 	db_response::ConnectionFunction();
 	today_date = getTodayDate();
 	//now_time = getNowTime();
