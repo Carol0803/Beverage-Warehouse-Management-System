@@ -95,7 +95,7 @@ void header()
 
 	cout << "\tUser: " << status << endl;
 	cout << "\tUsername: " << username << endl << endl;
-	
+
 }
 
 string getTodayDate()
@@ -223,7 +223,7 @@ void Login()
 	cout << endl << setw(52) << "------------------------------------------" << endl;
 	cout << setw(52) << "|  Beverage Warehouse Management System  |" << endl;
 	cout << setw(52) << "------------------------------------------" << endl;
-	
+
 	cout << endl << right << setw(33) << "LOG IN" << endl;
 	cout << "\n\t\tUser ID: ";
 	cin >> userID;
@@ -565,7 +565,7 @@ void PlaceOrder()
 		res = mysql_store_result(conn);
 		while (row = mysql_fetch_row(res))
 			cout << "\t" << left << setw(15) << row[0] << setw(50) << row[1] << right << setw(14) << row[2] << setw(24) << row[3] << endl;
-		
+
 		cout << "\n\t********************************* 5% discount for orders over RM10000 *********************************\n\n";
 	}
 	else
@@ -684,7 +684,7 @@ void PlaceOrder()
 		cout << "\n\tDo you want to order another product? (Y/N):";
 		cin >> y;
 		cin.ignore(100, '\n');
-		
+
 		while (y != 'y' && y != 'Y' && y != 'n' && y != 'N')
 		{
 			cout << "\tInvalid input." << endl;
@@ -814,7 +814,7 @@ void PlaceOrder()
 	qstate = mysql_query(conn, UO);
 	if (qstate)
 		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
-	
+
 	double T_debt = 0;
 	T_debt = stod(debt) + total_amount;
 	string Tdebt = to_string(T_debt);
@@ -869,7 +869,7 @@ void Invoice(string orderID, string custID)
 	{
 		res = mysql_store_result(conn);
 		while (row = mysql_fetch_row(res))
-			cout << left << "Order ID: " << orderID << endl << "\t" << setw(75) << row[1] << "Order Date: " << order_date << endl << "\t" << setw(75) << row[3] << "Payment Due Date: " << payment_duedate  << endl << "\t" << row[4] << endl << "\t" << row[5] << ", " << endl << "\t" << row[6] << ", " << row[7] << ". " << endl << "\t" << row[2] << endl;
+			cout << left << "Order ID: " << orderID << endl << "\t" << setw(75) << row[1] << "Order Date: " << order_date << endl << "\t" << setw(75) << row[3] << "Payment Due Date: " << payment_duedate << endl << "\t" << row[4] << endl << "\t" << row[5] << ", " << endl << "\t" << row[6] << ", " << row[7] << ". " << endl << "\t" << row[2] << endl;
 	}
 	else
 		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
@@ -991,7 +991,7 @@ void Invoice(string orderID, string custID)
 				cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
 			cout << "\n--------------------------------------------------------------------------------------------------------";
-			cout << endl  << left << setw(15) << "Product ID" << setw(50) << "Product Name" << setw(20) << "Price/unit(RM)" << setw(20) << "Quantity(carton)" << endl;
+			cout << endl << left << setw(15) << "Product ID" << setw(50) << "Product Name" << setw(20) << "Price/unit(RM)" << setw(20) << "Quantity(carton)" << endl;
 			cout << "--------------------------------------------------------------------------------------------------------" << endl;
 
 			int i = 0;
@@ -1655,7 +1655,7 @@ void DefaulterList()
 	cout << "\t---------------------------------------------------------------------------------------" << endl;
 	cout << "\t|			 	   DEFAULTER LIST  				      |" << endl;
 	cout << "\t---------------------------------------------------------------------------------------" << endl << endl;
-	
+
 
 	string checkOverdue_query = "SELECT * FROM customer WHERE cust_ID IN (SELECT cust_ID FROM orders WHERE order_ID IN (SELECT order_ID FROM paymentdetails WHERE payment_status = 4))";
 	const char* checkOverdue = checkOverdue_query.c_str();
@@ -1829,7 +1829,7 @@ void StockReport()
 	cout << "\t------------------------------------------------------------------------------------" << endl;
 	cout << "\t|			   	   STOCK REPORT					   |" << endl;
 	cout << "\t------------------------------------------------------------------------------------" << endl;
-	cout << "\t 			   	 " << "DATE: " << today_date << " 				    " << endl <<endl;
+	cout << "\t 			   	 " << "DATE: " << today_date << " 				    " << endl << endl;
 
 	qstate = mysql_query(conn, "SELECT * FROM product");
 	if (!qstate)
@@ -1848,7 +1848,7 @@ void StockReport()
 	{
 		string quantity, reorder_level;
 		int qty, rl;
-		
+
 		cout << "\n\n\t******************************* STOCK REMINDER *******************************\n";
 		cout << "\t\t\t\tItems that need replenishment:\n\n";
 		cout << "\t" << left << setw(15) << "Product ID" << setw(50) << "Product Name" << endl;
@@ -1905,7 +1905,7 @@ void StockReport()
 
 				cout << "\n\n******************************* STOCK REMINDER *******************************\n";
 				cout << "\t\t\tItems that need replenishment:\n\n";
-				cout  << left << setw(15) << "Product ID" << setw(50) << "Product Name" << endl;
+				cout << left << setw(15) << "Product ID" << setw(50) << "Product Name" << endl;
 				cout << "-------------------------------------------------------------" << endl;
 
 				res = mysql_store_result(conn);
@@ -2370,7 +2370,7 @@ void CustomerList()
 	qstate = mysql_query(conn, "SELECT * FROM customer");
 	if (!qstate)
 	{
-		cout <<"\t" << left << setw(15) << "Customer ID" << setw(32) << "Customer Name" << setw(18) << "Customer Tel." << setw(21) << "Customer Debt Amount(RM)" << endl;
+		cout << "\t" << left << setw(15) << "Customer ID" << setw(32) << "Customer Name" << setw(18) << "Customer Tel." << setw(21) << "Customer Debt Amount(RM)" << endl;
 		cout << "\t-------------------------------------------------------------------------------------------" << endl;
 		res = mysql_store_result(conn);
 		while (row = mysql_fetch_row(res))
@@ -2506,9 +2506,9 @@ void SalesReport()
 			int quantities[1000];
 			system("cls");
 			header();
-			cout << "\t------------------------------------------------------------------------------------" << endl << endl;
-			cout << "\t\t\t\t\tSALES REPORT " << endl;
-			cout << "\t\t\t\t\t " << date << endl << endl;
+			cout << "\t--------------------------------------------------------------------------------------------------------------------------" << endl << endl;
+			cout << "\t\t\t\t\tSALES REPORT " << date << endl << endl;
+			cout << "\tAnalysis based on Product Sold : \n";
 			cout << "\t" << left << setw(15) << "Product ID" << setw(45) << "Product Name" << right << setw(22) << "Quantity Sold(carton)" << endl;
 			cout << "\t------------------------------------------------------------------------------------" << endl;
 			string checkPN_query = "SELECT * FROM product";
@@ -2524,10 +2524,10 @@ void SalesReport()
 						if (row[0] == g_productID[b])
 							quantity = to_string(g_quantity[b]);
 					}
-					
+
 					productIDs[z] = row[0];
 					quantities[z] = stoi(quantity);
-					
+
 					cout << "\t" << left << setw(15) << row[0] << setw(45) << row[1] << right << setw(22) << quantity << endl;
 
 					quantity = "0";
@@ -2536,7 +2536,7 @@ void SalesReport()
 			}
 			else
 				cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
-			
+
 			//bar chart
 			int h_quantity;
 			int max = quantities[0];
@@ -2552,24 +2552,58 @@ void SalesReport()
 				h_quantity = 100000;
 			else
 				h_quantity = 1000;*/
-			
-			cout << "\n\t\t\t\t------------------------------------------------------------------\n";
+
+			cout << "\n\n\t\t\t\t------------------------------------------------------------------\n";
 			cout << "\t\t\t\t|		Graph of Quantity versus Product ID		 |\t\t\t\t\t\n";
 			cout << "\t\t\t\t------------------------------------------------------------------\n";
 
 			cout << "\t" << "Quantity(carton)\n";
 			cout << "\t" << right << setw(7) << "^" << endl;
-			for (int x = max; x > 0; x=x-100)
-			{ 
-				cout << "\t" << right << setw(5)  << x << " |";
-				for (int w = 0; w < z; w++)
+
+			if (max > 10000)
+			{
+				for (int x = max + (1000); x > 0; x = x - 1000)
 				{
-					if (quantities[w] >= x)
-						cout << " *** " << " ";
-					else
-						cout << "     " << " ";
+					cout << "\t" << right << setw(5) << x << " |";
+					for (int w = 0; w < z; w++)
+					{
+						if (quantities[w] >= x)
+							cout << " *** " << " ";
+						else
+							cout << "     " << " ";
+					}
+					cout << endl;
 				}
-				cout << endl;
+			}
+			if (max > 2500)
+			{
+				for (int x = max + (500); x > 0; x = x - 500)
+				{
+					cout << "\t" << right << setw(5) << x << " |";
+					for (int w = 0; w < z; w++)
+					{
+						if (quantities[w] >= x)
+							cout << " *** " << " ";
+						else
+							cout << "     " << " ";
+					}
+					cout << endl;
+				}
+			}
+			else
+			{
+				for (int x = max + (100); x > 0; x = x - 100)
+				{
+					cout << "\t" << right << setw(5) << x << " |";
+					for (int w = 0; w < z; w++)
+					{
+						if (quantities[w] >= x)
+							cout << " *** " << " ";
+						else
+							cout << "     " << " ";
+					}
+					cout << endl;
+				}
 			}
 
 			cout << "\t      +";
@@ -2585,16 +2619,16 @@ void SalesReport()
 			}
 			cout << endl << endl;
 
-				/*int quantity, h_quantity, highest; //0-10000
+			/*int quantity, h_quantity, highest; //0-10000
 
-				if (highest > 1000)
-					h_quantity = 10000;
-				else if (highest > 10000)
-					h_quantity = 100000;
-				else
-					h_quantity = 1000;
+			if (highest > 1000)
+				h_quantity = 10000;
+			else if (highest > 10000)
+				h_quantity = 100000;
+			else
+				h_quantity = 1000;
 
-				string productID[100];*/
+			string productID[100];*/
 
 			/*string amount;
 			double total = 0;
@@ -2644,28 +2678,255 @@ void SalesReport()
 				{
 					res = mysql_store_result(conn);
 					while (row = mysql_fetch_row(res))
-						cout << "\t" << e + 1 << ". " << row[1] << endl;
+						cout << "\t" << e + 1 << ". " << "[" << row[0] << "]  " << row[1] << " --> " << g_quantity[e] << " carton" << endl;
 				}
 				else
 					cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 			}
 
-			char txt;
-			do {
-				cout << "\n\n\tDo you want to export as text file?(Y/N): ";
-				cin >> txt;
-				cin.ignore(100, '\n');
+			cout << endl << endl << endl;
 
-				if (txt == 'Y' || txt == 'y') {
-					CreateDirectory(L"C:\\Beverage Warehouse Management System\\Sales Report", NULL);
-					string filename = "C:\\Beverage Warehouse Management System\\Sales Report\\Sales Report " + date + ".txt";
-					ofstream writeFile(filename, ios::out);
-					auto cout_buff = cout.rdbuf();	// pointer to cout buffer
-					cout.rdbuf(writeFile.rdbuf());	// substitute cout buffer with local ofstream buffer
+			string total_amount[1000], cust_ID[1000], custid[1000];
+			double total[1000];
+			string checkTA_query = "SELECT * FROM orders WHERE order_date LIKE '%" + date + "%'";
+			const char* checkTA = checkTA_query.c_str();
+			qstate = mysql_query(conn, checkTA);
+			if (!qstate)
+			{
+				int t = 0;
+				res = mysql_store_result(conn);
+				while (row = mysql_fetch_row(res))
+				{
+					total_amount[t] = row[4];
+					cust_ID[t] = row[5];
+					t++;
+				}
 
-					cout << "\t\t\t\tSALES REPORT " << endl;
-					cout << "\t\t\t\t " << date << endl << endl;
-					cout << left << setw(15) << "Product ID" << setw(45) << "Product Name" << setw(20) << "Quantity Sold" << endl;
+				int w = 0;
+				for (int u = 0; u < t + 1; u++)
+				{
+					if (!cust_ID[u].empty())
+					{
+						custid[w] = cust_ID[u];
+						total[w] = stod(total_amount[u]);
+						for (int v = u + 1; v < t + 1; v++)
+						{
+							if (cust_ID[v] == custid[w])
+							{
+								double totalamount = stod(total_amount[v]);
+								total[w] = total[w] + totalamount;
+								cust_ID[v].clear();
+							}
+						}
+						cust_ID[u].clear();
+						w++;
+					}
+					else
+						continue;
+				}
+
+				cout << "\tAnalysis based on Amount Spend by Customer : \n";
+				cout << "\t" << left << setw(15) << "Customer ID" << setw(45) << "Customer Name" << right << setw(22) << "Amount Spend(RM)" << endl;
+				cout << "\t------------------------------------------------------------------------------------" << endl;
+				for (int q = 0; q < w; q++)
+				{
+					string checkCN_query = "SELECT * FROM customer WHERE cust_ID = '" + custid[q] + "'";
+					const char* checkCN = checkCN_query.c_str();
+					qstate = mysql_query(conn, checkCN);
+					if (!qstate)
+					{
+						res = mysql_store_result(conn);
+						while (row = mysql_fetch_row(res))
+							cout << "\t" << left << setw(15) << row[0] << setw(45) << row[1] << right << setw(22) << fixed << setprecision(2) << total[q] << endl;
+					}
+					else
+						cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+				}
+
+				/*
+				//bar chart for amount spend
+				//int ASh_quantity;
+				int ASmax = total[0];
+				for (int y = 1; y < w; y++)
+				{
+					if (total[y] > ASmax)
+						ASmax = total[y];
+				}
+
+				cout << "\n\n\t\t\t\t------------------------------------------------------------------\n";
+				cout << "\t\t\t\t|		Graph of Amount Spend versus Customer ID		 |\t\t\t\t\t\n";
+				cout << "\t\t\t\t------------------------------------------------------------------\n";
+
+				cout << "\t" << "Amount Spend(RM)\n";
+				cout << "\t" << right << setw(7) << "^" << endl;
+
+				if (ASmax > 100000)
+				{
+					for (int x = ASmax + (10000); x > 0; x = x - 10000)
+					{
+						cout << "\t" << right << setw(5) << x << " |";
+						for (int ASw = 0; ASw < w; ASw++)
+						{
+							if (total[ASw] >= x)
+								cout << " *** " << " ";
+							else
+								cout << "     " << " ";
+						}
+						cout << endl;
+					}
+				}
+				if (ASmax > 25000)
+				{
+					for (int x = ASmax + (5000); x > 0; x = x - 5000)
+					{
+						cout << "\t" << right << setw(5) << x << " |";
+						for (int ASw = 0; ASw < w; ASw++)
+						{
+							if (total[ASw] >= x)
+								cout << " *** " << " ";
+							else
+								cout << "     " << " ";
+						}
+						cout << endl;
+					}
+				}
+				else
+				{
+					for (int x = ASmax + (1000); x > 0; x = x - 1000)
+					{
+						cout << "\t" << right << setw(5) << x << " |";
+						for (int ASw = 0; ASw < w; ASw++)
+						{
+							if (total[ASw] >= x)
+								cout << " *** " << " ";
+							else
+								cout << "     " << " ";
+						}
+						cout << endl;
+					}
+				}
+
+				cout << "\t      +";
+				for (int ASw = 0; ASw < w; ASw++)
+				{
+					cout << "--+---";
+				}
+				cout << "> Customer ID\n";
+				cout << "\t       ";
+				for (int ASw = 0; ASw < w; ASw++)
+				{
+					cout << productIDs[ASw] << " ";
+				}
+				cout << endl << endl;
+				*/
+
+				double temp3;
+				string temp4;
+				for (int c = 0; c < w; ++c)
+				{
+					for (int d = c + 1; d < w; ++d)
+					{
+						if (total[c] < total[d])
+						{
+							temp = total[c];
+							total[c] = total[d];
+							total[d] = temp;
+
+							temp2 = custid[c];
+							custid[c] = custid[d];
+							custid[d] = temp2;
+						}
+					}
+				}
+
+				cout << "\n\n\tTOP 5 BUYERS" << endl;
+				for (int e = 0; e < 5; e++)
+				{
+					string checkT5_query = "SELECT * FROM customer WHERE cust_ID = '" + custid[e] + "'";
+					const char* checkT5 = checkT5_query.c_str();
+					qstate = mysql_query(conn, checkT5);
+					if (!qstate)
+					{
+						res = mysql_store_result(conn);
+						while (row = mysql_fetch_row(res))
+							cout << "\t" << e + 1 << ". " << "[" << row[0] << "]  " << row[1] << " --> RM " << fixed << setprecision(2) << total[e] << endl;
+					}
+					else
+						cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+				}
+
+			}
+			else
+				cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+		}
+	}
+	else
+		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+
+	char txt;
+	do {
+		cout << "\n\n\tDo you want to export as text file?(Y/N): ";
+		cin >> txt;
+		cin.ignore(100, '\n');
+
+		if (txt == 'Y' || txt == 'y') {
+			CreateDirectory(L"C:\\Beverage Warehouse Management System\\Sales Report", NULL);
+			string filename = "C:\\Beverage Warehouse Management System\\Sales Report\\Sales Report " + date + ".txt";
+			ofstream writeFile(filename, ios::out);
+			auto cout_buff = cout.rdbuf();	// pointer to cout buffer
+			cout.rdbuf(writeFile.rdbuf());	// substitute cout buffer with local ofstream buffer
+
+			string checkPI_query = "SELECT * FROM orderdetails WHERE order_ID IN (SELECT order_ID FROM orders WHERE order_date LIKE '%" + date + "%')";
+			const char* checkPI = checkPI_query.c_str();
+			qstate = mysql_query(conn, checkPI);
+			if (!qstate)
+			{
+				int i = 0;
+				res = mysql_store_result(conn);
+
+				if (res->row_count == 0) {
+					cout << "\tSales report for this date is not available.\n";
+					cout << "\n\tPress enter to back to Main Menu...";
+					_getch();
+					system("cls");
+					AdminMainMenu();
+				}
+				else
+				{
+					while (row = mysql_fetch_row(res))
+					{
+						productID[i] = row[2];
+						quantity[i] = row[3];
+						i++;
+					}
+
+					int a = 0;
+					for (int j = 0; j < i + 1; j++)
+					{
+						if (!productID[j].empty()) {
+							g_productID[a] = productID[j];
+							g_quantity[a] = stoi(quantity[j]);
+
+							for (int k = j + 1; k < i + 1; k++)
+							{
+								if (g_productID[a] == productID[k]) {
+									g_quantity[a] = g_quantity[a] + stoi(quantity[k]);
+									productID[k].clear();
+								}
+							}
+							productID[j].clear();
+							a++;
+						}
+					}
+
+					string quantity = "0";
+					int z = 0;
+					string productIDs[1000];
+					int quantities[1000];
+					cout << "\t\t\t\t\tSALES REPORT " << date << endl << endl;
+					cout << "\tAnalysis based on Product Sold : \n";
+					cout << "\t" << left << setw(15) << "Product ID" << setw(45) << "Product Name" << right << setw(22) << "Quantity Sold(carton)" << endl;
+					cout << "\t------------------------------------------------------------------------------------" << endl;
 					string checkPN_query = "SELECT * FROM product";
 					const char* checkPN = checkPN_query.c_str();
 					qstate = mysql_query(conn, checkPN);
@@ -2680,15 +2941,112 @@ void SalesReport()
 									quantity = to_string(g_quantity[b]);
 							}
 
-							cout << left << setw(15) << row[0] << setw(45) << row[1] << setw(20) << quantity << endl;
+							productIDs[z] = row[0];
+							quantities[z] = stoi(quantity);
+
+							cout << "\t" << left << setw(15) << row[0] << setw(45) << row[1] << right << setw(22) << quantity << endl;
 
 							quantity = "0";
+							z++;
 						}
 					}
 					else
 						cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 
-					string amount;
+					//bar chart
+					int h_quantity;
+					int max = quantities[0];
+					for (int y = 1; y < z; y++)
+					{
+						if (quantities[y] > max)
+							max = quantities[y];
+					}
+
+					/*if (max > 1000)
+						h_quantity = 10000;
+					else if (max > 10000)
+						h_quantity = 100000;
+					else
+						h_quantity = 1000;*/
+
+					cout << "\n\n\t\t\t\t------------------------------------------------------------------\n";
+					cout << "\t\t\t\t|		Graph of Quantity versus Product ID		 |\t\t\t\t\t\n";
+					cout << "\t\t\t\t------------------------------------------------------------------\n";
+
+					cout << "\t" << "Quantity(carton)\n";
+					cout << "\t" << right << setw(7) << "^" << endl;
+
+					if (max > 10000)
+					{
+						for (int x = max + (1000); x > 0; x = x - 1000)
+						{
+							cout << "\t" << right << setw(5) << x << " |";
+							for (int w = 0; w < z; w++)
+							{
+								if (quantities[w] >= x)
+									cout << " *** " << " ";
+								else
+									cout << "     " << " ";
+							}
+							cout << endl;
+						}
+					}
+					if (max > 2500)
+					{
+						for (int x = max + (500); x > 0; x = x - 500)
+						{
+							cout << "\t" << right << setw(5) << x << " |";
+							for (int w = 0; w < z; w++)
+							{
+								if (quantities[w] >= x)
+									cout << " *** " << " ";
+								else
+									cout << "     " << " ";
+							}
+							cout << endl;
+						}
+					}
+					else
+					{
+						for (int x = max + (100); x > 0; x = x - 100)
+						{
+							cout << "\t" << right << setw(5) << x << " |";
+							for (int w = 0; w < z; w++)
+							{
+								if (quantities[w] >= x)
+									cout << " *** " << " ";
+								else
+									cout << "     " << " ";
+							}
+							cout << endl;
+						}
+					}
+
+					cout << "\t      +";
+					for (int w = 0; w < z; w++)
+					{
+						cout << "--+---";
+					}
+					cout << "> Product ID\n";
+					cout << "\t       ";
+					for (int w = 0; w < z; w++)
+					{
+						cout << productIDs[w] << " ";
+					}
+					cout << endl << endl;
+
+					/*int quantity, h_quantity, highest; //0-10000
+
+					if (highest > 1000)
+						h_quantity = 10000;
+					else if (highest > 10000)
+						h_quantity = 100000;
+					else
+						h_quantity = 1000;
+
+					string productID[100];*/
+
+					/*string amount;
 					double total = 0;
 					string checkTE_query = "SELECT * FROM orders WHERE order_date LIKE '%" + date + "%'";
 					const char* checkTE = checkTE_query.c_str();
@@ -2704,7 +3062,8 @@ void SalesReport()
 					}
 					else
 						cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
-					cout << "\nTotal Aamount Earned for " << date << " = RM " << fixed << setprecision(2) << total << endl;
+
+					cout << "\n\tTotal Aamount Earned for " << date << " = RM " << fixed << setprecision(2) << total << endl;*/
 
 					int temp;
 					string temp2;
@@ -2725,7 +3084,7 @@ void SalesReport()
 						}
 					}
 
-					cout << "\nTOP 5 SELLING BEVERAGES" << endl;
+					cout << "\n\tTOP 5 SELLING BEVERAGES" << endl;
 					for (int e = 0; e < 5; e++)
 					{
 						string checkT5_query = "SELECT * FROM product WHERE product_ID = '" + g_productID[e] + "'";
@@ -2735,37 +3094,208 @@ void SalesReport()
 						{
 							res = mysql_store_result(conn);
 							while (row = mysql_fetch_row(res))
-								cout << e + 1 << ". " << row[1] << endl;
+								cout << "\t" << e + 1 << ". " << "[" << row[0] << "]  " << row[1] << " --> " << g_quantity[e] << " carton" << endl;
 						}
 						else
 							cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 					}
+
+					cout << endl << endl << endl;
+
+					string total_amount[1000], cust_ID[1000], custid[1000];
+					double total[1000];
+					string checkTA_query = "SELECT * FROM orders WHERE order_date LIKE '%" + date + "%'";
+					const char* checkTA = checkTA_query.c_str();
+					qstate = mysql_query(conn, checkTA);
+					if (!qstate)
+					{
+						int t = 0;
+						res = mysql_store_result(conn);
+						while (row = mysql_fetch_row(res))
+						{
+							total_amount[t] = row[4];
+							cust_ID[t] = row[5];
+							t++;
+						}
+
+						int w = 0;
+						for (int u = 0; u < t + 1; u++)
+						{
+							if (!cust_ID[u].empty())
+							{
+								custid[w] = cust_ID[u];
+								total[w] = stod(total_amount[u]);
+								for (int v = u + 1; v < t + 1; v++)
+								{
+									if (cust_ID[v] == custid[w])
+									{
+										double totalamount = stod(total_amount[v]);
+										total[w] = total[w] + totalamount;
+										cust_ID[v].clear();
+									}
+								}
+								cust_ID[u].clear();
+								w++;
+							}
+							else
+								continue;
+						}
+
+						cout << "\tAnalysis based on Amount Spend by Customer : \n";
+						cout << "\t" << left << setw(15) << "Customer ID" << setw(45) << "Customer Name" << right << setw(22) << "Amount Spend(RM)" << endl;
+						cout << "\t------------------------------------------------------------------------------------" << endl;
+						for (int q = 0; q < w; q++)
+						{
+							string checkCN_query = "SELECT * FROM customer WHERE cust_ID = '" + custid[q] + "'";
+							const char* checkCN = checkCN_query.c_str();
+							qstate = mysql_query(conn, checkCN);
+							if (!qstate)
+							{
+								res = mysql_store_result(conn);
+								while (row = mysql_fetch_row(res))
+									cout << "\t" << left << setw(15) << row[0] << setw(45) << row[1] << right << setw(22) << fixed << setprecision(2) << total[q] << endl;
+							}
+							else
+								cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+						}
+
+						/*
+						//bar chart for amount spend
+						//int ASh_quantity;
+						int ASmax = total[0];
+						for (int y = 1; y < w; y++)
+						{
+							if (total[y] > ASmax)
+								ASmax = total[y];
+						}
+
+						cout << "\n\n\t\t\t\t------------------------------------------------------------------\n";
+						cout << "\t\t\t\t|		Graph of Amount Spend versus Customer ID		 |\t\t\t\t\t\n";
+						cout << "\t\t\t\t------------------------------------------------------------------\n";
+
+						cout << "\t" << "Amount Spend(RM)\n";
+						cout << "\t" << right << setw(7) << "^" << endl;
+
+						if (ASmax > 100000)
+						{
+							for (int x = ASmax + (10000); x > 0; x = x - 10000)
+							{
+								cout << "\t" << right << setw(5) << x << " |";
+								for (int ASw = 0; ASw < w; ASw++)
+								{
+									if (total[ASw] >= x)
+										cout << " *** " << " ";
+									else
+										cout << "     " << " ";
+								}
+								cout << endl;
+							}
+						}
+						if (ASmax > 25000)
+						{
+							for (int x = ASmax + (5000); x > 0; x = x - 5000)
+							{
+								cout << "\t" << right << setw(5) << x << " |";
+								for (int ASw = 0; ASw < w; ASw++)
+								{
+									if (total[ASw] >= x)
+										cout << " *** " << " ";
+									else
+										cout << "     " << " ";
+								}
+								cout << endl;
+							}
+						}
+						else
+						{
+							for (int x = ASmax + (1000); x > 0; x = x - 1000)
+							{
+								cout << "\t" << right << setw(5) << x << " |";
+								for (int ASw = 0; ASw < w; ASw++)
+								{
+									if (total[ASw] >= x)
+										cout << " *** " << " ";
+									else
+										cout << "     " << " ";
+								}
+								cout << endl;
+							}
+						}
+
+						cout << "\t      +";
+						for (int ASw = 0; ASw < w; ASw++)
+						{
+							cout << "--+---";
+						}
+						cout << "> Customer ID\n";
+						cout << "\t       ";
+						for (int ASw = 0; ASw < w; ASw++)
+						{
+							cout << productIDs[ASw] << " ";
+						}
+						cout << endl << endl;
+						*/
+
+						double temp3;
+						string temp4;
+						for (int c = 0; c < w; ++c)
+						{
+							for (int d = c + 1; d < w; ++d)
+							{
+								if (total[c] < total[d])
+								{
+									temp = total[c];
+									total[c] = total[d];
+									total[d] = temp;
+
+									temp2 = custid[c];
+									custid[c] = custid[d];
+									custid[d] = temp2;
+								}
+							}
+						}
+
+						cout << "\n\n\tTOP 5 BUYERS" << endl;
+						for (int e = 0; e < 5; e++)
+						{
+							string checkT5_query = "SELECT * FROM customer WHERE cust_ID = '" + custid[e] + "'";
+							const char* checkT5 = checkT5_query.c_str();
+							qstate = mysql_query(conn, checkT5);
+							if (!qstate)
+							{
+								res = mysql_store_result(conn);
+								while (row = mysql_fetch_row(res))
+									cout << "\t" << e + 1 << ". " << "[" << row[0] << "]  " << row[1] << " --> RM " << fixed << setprecision(2) << total[e] << endl;
+							}
+							else
+								cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+						}
+					}
+					else
+						cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 					cout.rdbuf(cout_buff);	// go back to cout buffer
 					cout << "\tSuccessfully exported to ";
 					cout << filename << endl;
 				}
-				else if (txt != 'Y' && txt != 'y' && txt != 'N' && txt != 'n')
-					cout << "\tInvalid input.Try again.";
-
-			} while (txt != 'Y' && txt != 'y' && txt != 'N' && txt != 'n');
+			}
+			else if (txt != 'Y' && txt != 'y' && txt != 'N' && txt != 'n')
+				cout << "\tInvalid input.Try again.";
 		}
-	}
-	else
-	cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
+	} while (txt != 'Y' && txt != 'y' && txt != 'N' && txt != 'n');
 
-	cout << "\n\tPress enter to back to Main Menu...";
-	_getch();
-	system("cls");
-	AdminMainMenu();
-}
-
-int main() {
+		cout << "\n\tPress enter to back to Main Menu...";
+		_getch();
+		system("cls");
+		AdminMainMenu();
+}		
+	
+int main()
+{
 	db_response::ConnectionFunction();
 	today_date = getTodayDate();
 	//now_time = getNowTime();
 	checkOverdue();
 	CreateDirectory(L"C:\\Beverage Warehouse Management System", NULL);	//create a directory if does not exist
 	WelcomePage();
-	
 	return 0;
 }
