@@ -294,85 +294,319 @@ void SignUp()
 	string access_type = "C";
 	cout << endl << "\t" << right << setw(26) << "SIGN UP" << endl << endl;
 	cout << "\tPlease fill the details to register an account." << endl;
-	//cin.ignore(1, '\n');
+	int count = 0;
+	char stop;
 
 	do {
 		cout << "\tName: ";
 		getline(cin, cust_name);
 
-		if (cust_name.empty())
+		if (cust_name.empty()) {
 			cout << "\tDo not leave blank.\n";
+			count++;
+		}
+		if (count == 3)
+		{
+			do
+			{
+				cout << "\n\tDo you want to stop signing up?(Y/N): ";
+				cin >> stop;
+				if (stop == 'Y' || stop == 'y')
+				{
+					cout << "\n\tPress enter to return to main page...";
+					_getch();
+					WelcomePage();
+				}
+				else if (stop == 'N' || stop == 'n')
+				{
+					count = 0;
+					cout << endl;
+					cin.ignore(1, '\n');
+					continue;
+				}
+				else
+					cout << "\tInvalid input. Try again\n";
+			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+		}
 	} while (cust_name.empty());
 
+	count = 0;
 	do {
 		cout << "\tContact number: ";
 		getline(cin, cust_tel);
 
-		if (cust_tel.empty())
+		if (cust_tel.empty()){
 			cout << "\tDo not leave blank.\n";
+			count++;
+		}
+		if (count == 3)
+		{
+			do
+			{
+				cout << "\n\tDo you want to stop signing up?(Y/N): ";
+				cin >> stop;
+				if (stop == 'Y' || stop == 'y')
+				{
+					cout << "\n\tPress enter to return to main page...";
+					_getch();
+					WelcomePage();
+				}
+				else if (stop == 'N' || stop == 'n')
+				{
+					count = 0;
+					cout << endl;
+					cin.ignore(1, '\n');
+					continue;
+				}
+				else
+					cout << "\tInvalid input. Try again\n";
+			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+		}
 	} while (cust_tel.empty());
 
+	count = 0;
 	do {
 		cout << "\tAddress: ";
 		getline(cin, cust_add1);
 
-		if (cust_add1.empty())
+		if (cust_add1.empty()){
 			cout << "\tDo not leave blank.\n";
+			count++;
+		}
+		if (count == 3)
+		{
+			do
+			{
+				cout << "\n\tDo you want to stop signing up?(Y/N): ";
+				cin >> stop;
+				if (stop == 'Y' || stop == 'y')
+				{
+					cout << "\n\tPress enter to return to main page...";
+					_getch();
+					WelcomePage();
+				}
+				else if (stop == 'N' || stop == 'n')
+				{
+					count = 0;
+					cout << endl;
+					cin.ignore(1, '\n');
+					continue;
+				}
+				else
+					cout << "\tInvalid input. Try again\n";
+			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+		}
 	} while (cust_add1.empty());
 
 	cout << "\tAddress 2: ";
 	getline(cin, cust_add2);
 
+	count = 0;
 	do {
 		cout << "\tArea: ";
 		getline(cin, cust_area);
 
-		if (cust_area.empty())
+		if (cust_area.empty()){
 			cout << "\tDo not leave blank.\n";
+			count++;
+		}
+		if (count == 3)
+		{
+			do
+			{
+				cout << "\n\tDo you want to stop signing up?(Y/N): ";
+				cin >> stop;
+				if (stop == 'Y' || stop == 'y')
+				{
+					cout << "\n\tPress enter to return to main page...";
+					_getch();
+					WelcomePage();
+				}
+				else if (stop == 'N' || stop == 'n')
+				{
+					count = 0;
+					cout << endl;
+					cin.ignore(1, '\n');
+					continue;
+				}
+				else
+					cout << "\tInvalid input. Try again\n";
+			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+		}
 	} while (cust_area.empty());
 
+	count = 0;
 	do {
 		cout << "\tPostcode: ";
 		getline(cin, cust_postcode);
 
-		if (cust_postcode.length() != 5)
+		if (!cust_postcode.empty() && cust_postcode.length() != 5)
 			cout << "\tPlease follow Malaysia's postcode format. Try again.\n";
 
-		if (cust_postcode.empty())
+		if (cust_postcode.empty()){
 			cout << "\tDo not leave blank.\n";
+			count++;
+		}
+		if (count == 3)
+		{
+			do
+			{
+				cout << "\n\tDo you want to stop signing up?(Y/N): ";
+				cin >> stop;
+				if (stop == 'Y' || stop == 'y')
+				{
+					cout << "\n\tPress enter to return to main page...";
+					_getch();
+					WelcomePage();
+				}
+				else if (stop == 'N' || stop == 'n')
+				{
+					count = 0;
+					cout << endl;
+					cin.ignore(1, '\n');
+					continue;
+				}
+				else
+					cout << "\tInvalid input. Try again\n";
+			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+		}
 	} while (cust_postcode.empty() || cust_postcode.length() != 5);
 
+	count = 0;
 	do {
 		cout << "\tState: ";
 		getline(cin, cust_state);
 
-		if (cust_state.empty())
+		if (cust_state.empty()){
 			cout << "\tDo not leave blank.\n";
+			count++;
+		}
+		if (count == 3)
+		{
+			do
+			{
+				cout << "\n\tDo you want to stop signing up?(Y/N): ";
+				cin >> stop;
+				if (stop == 'Y' || stop == 'y')
+				{
+					cout << "\n\tPress enter to return to main page...";
+					_getch();
+					WelcomePage();
+				}
+				else if (stop == 'N' || stop == 'n')
+				{
+					count = 0;
+					cout << endl;
+					cin.ignore(1, '\n');
+					continue;
+				}
+				else
+					cout << "\tInvalid input. Try again\n";
+			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+		}
 	} while (cust_state.empty());
 
+	count = 0;
 	do {
 		cout << "\tUsername: ";
 		getline(cin, username);
 
-		if (username.empty())
+		if (username.empty()){
 			cout << "\tDo not leave blank.\n";
+			count++;
+		}
+		if (count == 3)
+		{
+			do
+			{
+				cout << "\n\tDo you want to stop signing up?(Y/N): ";
+				cin >> stop;
+				if (stop == 'Y' || stop == 'y')
+				{
+					cout << "\n\tPress enter to return to main page...";
+					_getch();
+					WelcomePage();
+				}
+				else if (stop == 'N' || stop == 'n')
+				{
+					count = 0;
+					cout << endl;
+					cin.ignore(1, '\n');
+					continue;
+				}
+				else
+					cout << "\tInvalid input. Try again\n";
+			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+		}
 	} while (username.empty());
 
 	do {
+		count = 0;
 		do {
 			cout << "\tPassword: ";
 			getline(cin, password);
 
-			if (password.empty())
+			if (password.empty()){
 				cout << "\tDo not leave blank.\n";
+				count++;
+			}
+			if (count == 3)
+			{
+				do
+				{
+					cout << "\n\tDo you want to stop signing up?(Y/N): ";
+					cin >> stop;
+					if (stop == 'Y' || stop == 'y')
+					{
+						cout << "\n\tPress enter to return to main page...";
+						_getch();
+						WelcomePage();
+					}
+					else if (stop == 'N' || stop == 'n')
+					{
+						count = 0;
+						cout << endl;
+						cin.ignore(1, '\n');
+						continue;
+					}
+					else
+						cout << "\tInvalid input. Try again\n";
+				} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+			}
 		} while (password.empty());
 
+		count = 0;
 		do {
 			cout << "\tRe-enter password: ";
 			getline(cin, password2);
 
-			if (password2.empty())
+			if (password2.empty()){
 				cout << "\tDo not leave blank.\n";
+				count++;
+			}
+			if (count == 3)
+			{
+				do
+				{
+					cout << "\n\tDo you want to stop signing up?(Y/N): ";
+					cin >> stop;
+					if (stop == 'Y' || stop == 'y')
+					{
+						cout << "\n\tPress enter to return to main page...";
+						_getch();
+						WelcomePage();
+					}
+					else if (stop == 'N' || stop == 'n')
+					{
+						count = 0;
+						cout << endl;
+						cin.ignore(1, '\n');
+						continue;
+					}
+					else
+						cout << "\tInvalid input. Try again\n";
+				} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+			}
 		} while (password2.empty());
 
 		if (password != password2)
@@ -426,7 +660,7 @@ void CustomerMainMenu()
 	cout << "\t|       		MAIN MENU  			  |" << endl;
 	cout << "\t-----------------------------------------------------------" << endl;
 	cout << "\tPlease select an option by entering the number labelled.\n" << endl;
-	cout << "\t1 - Place order\n\t2 - View Invoice\n\t0 - Log out\n\n";
+	cout << "\t1 - Place order\n\t2 - View invoice\n\t0 - Log out\n\n";
 	cout << "\tEnter your selection: ";
 	cin >> select;
 	cin.ignore(100, '\n');
@@ -2009,29 +2243,111 @@ void AddNewProduct()
 	char np;
 
 	do {
+		int count = 0;
+		char stop;
+
 		do {
 			cout << "\tEnter product name: ";
-			//cin.ignore(1, '\n');
 			getline(cin, product_name);
 
-			if (product_name.empty())
+			if (product_name.empty()){
 				cout << "\tDo not leave blank.\n";
+				count++;
+			}
+			if (count == 3)
+			{
+				do
+				{
+					cout << "\n\tDo you want to stop signing up?(Y/N): ";
+					cin >> stop;
+					if (stop == 'Y' || stop == 'y')
+					{
+						cout << "\n\tPress enter to return to Main Menu...";
+						_getch();
+						system("cls");
+						AdminMainMenu();
+					}
+					else if (stop == 'N' || stop == 'n')
+					{
+						count = 0;
+						cout << endl;
+						cin.ignore(1, '\n');
+						continue;
+					}
+					else
+						cout << "\tInvalid input. Try again\n";
+				} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+			}
 		} while (product_name.empty());
 
+		count = 0;
 		do {
 			cout << "\tSet price per unit: RM ";
 			getline(cin, price);
 
-			if (price.empty())
+			if (price.empty()){
 				cout << "\tDo not leave blank.\n";
+				count++;
+			}
+			if (count == 3)
+			{
+				do
+				{
+					cout << "\n\tDo you want to stop signing up?(Y/N): ";
+					cin >> stop;
+					if (stop == 'Y' || stop == 'y')
+					{
+						cout << "\n\tPress enter to return to Main Menu...";
+						_getch();
+						system("cls");
+						AdminMainMenu();
+					}
+					else if (stop == 'N' || stop == 'n')
+					{
+						count = 0;
+						cout << endl;
+						cin.ignore(1, '\n');
+						continue;
+					}
+					else
+						cout << "\tInvalid input. Try again\n";
+				} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+			}
 		} while (price.empty());
 
+		count = 0;
 		do {
 			cout << "\tSet reorder level(in carton): ";
 			getline(cin, reorder_level);
 
-			if (reorder_level.empty())
+			if (reorder_level.empty()){
 				cout << "\tDo not leave blank.\n";
+				count++;
+			}
+			if (count == 3)
+			{
+				do
+				{
+					cout << "\n\tDo you want to stop signing up?(Y/N): ";
+					cin >> stop;
+					if (stop == 'Y' || stop == 'y')
+					{
+						cout << "\n\tPress enter to return to Main Menu...";
+						_getch();
+						system("cls");
+						AdminMainMenu();
+					}
+					else if (stop == 'N' || stop == 'n')
+					{
+						count = 0;
+						cout << endl;
+						cin.ignore(1, '\n');
+						continue;
+					}
+					else
+						cout << "\tInvalid input. Try again\n";
+				} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+			}
 			else
 				allNotEmpty = true;
 
@@ -2088,8 +2404,10 @@ void AddNewStaff()
 	cout << "\t---------------------------------------------------------------------" << endl << endl;
 
 	string access_type, s_name, s_tel, s_add1, s_add2, s_area, s_postcode, s_state, username, password, password2, userID;
-
+	int count = 0;
+	char stop;
 	cout << "\tPlease fill in the details to register a new staff." << endl << endl;
+
 	do {
 		cout << "\tRegister as? (S-Staff, A-Administrator): ";
 		getline(cin, access_type);
@@ -2098,91 +2416,360 @@ void AddNewStaff()
 			access_type = "S";
 		if (access_type == "a")
 			access_type = "A";
-		if (access_type.empty())
+		if (access_type.empty()){
 			cout << "\tDo not leave blank.\n";
+			count++;
+		}
+		if (count == 3)
+		{
+			do
+			{
+				cout << "\n\tDo you want to stop signing up?(Y/N): ";
+				cin >> stop;
+				if (stop == 'Y' || stop == 'y')
+				{
+					cout << "\n\tPress enter to return to Main Menu...";
+					_getch();
+					system("cls");
+					AdminMainMenu();
+				}
+				else if (stop == 'N' || stop == 'n')
+				{
+					count = 0;
+					cout << endl;
+					cin.ignore(1, '\n');
+					continue;
+				}
+				else
+					cout << "\tInvalid input. Try again\n";
+			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+		}
 
 		if (access_type != "S" && access_type != "A" && access_type != "s" && access_type != "A" && !access_type.empty())
 			cout << "\tInvalid input.Try again.\n";
 	} while (access_type.empty() || (access_type != "S" && access_type != "A" && access_type != "s" && access_type != "A"));
 
+	count = 0;
 	do {
 		cout << "\tName: ";
 		//cin.ignore(1, '\n');
 		getline(cin, s_name);
 
-		if (s_name.empty())
+		if (s_name.empty()){
 			cout << "\tDo not leave blank.\n";
+			count++;
+		}
+		if (count == 3)
+		{
+			do
+			{
+				cout << "\n\tDo you want to stop signing up?(Y/N): ";
+				cin >> stop;
+				if (stop == 'Y' || stop == 'y')
+				{
+					cout << "\n\tPress enter to return to Main Menu...";
+					_getch();
+					system("cls");
+					AdminMainMenu();
+				}
+				else if (stop == 'N' || stop == 'n')
+				{
+					count = 0;
+					cout << endl;
+					cin.ignore(1, '\n');
+					continue;
+				}
+				else
+					cout << "\tInvalid input. Try again\n";
+			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+		}
 	} while (s_name.empty());
 
+	count = 0;
 	do {
 		cout << "\tContact number: ";
 		getline(cin, s_tel);
 
-		if (s_tel.empty())
+		if (s_tel.empty()){
 			cout << "\tDo not leave blank.\n";
+			count++;
+		}
+		if (count == 3)
+		{
+			do
+			{
+				cout << "\n\tDo you want to stop signing up?(Y/N): ";
+				cin >> stop;
+				if (stop == 'Y' || stop == 'y')
+				{
+					cout << "\n\tPress enter to return to Main Menu...";
+					_getch();
+					system("cls");
+					AdminMainMenu();
+				}
+				else if (stop == 'N' || stop == 'n')
+				{
+					count = 0;
+					cout << endl;
+					cin.ignore(1, '\n');
+					continue;
+				}
+				else
+					cout << "\tInvalid input. Try again\n";
+			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+		}
 	} while (s_tel.empty());
 
+	count = 0;
 	do {
 		cout << "\tAddress: ";
 		getline(cin, s_add1);
 
-		if (s_add1.empty())
+		if (s_add1.empty()){
 			cout << "\tDo not leave blank.\n";
+			count++;
+		}
+		if (count == 3)
+		{
+			do
+			{
+				cout << "\n\tDo you want to stop signing up?(Y/N): ";
+				cin >> stop;
+				if (stop == 'Y' || stop == 'y')
+				{
+					cout << "\n\tPress enter to return to Main Menu...";
+					_getch();
+					system("cls");
+					AdminMainMenu();
+				}
+				else if (stop == 'N' || stop == 'n')
+				{
+					count = 0;
+					cout << endl;
+					cin.ignore(1, '\n');
+					continue;
+				}
+				else
+					cout << "\tInvalid input. Try again\n";
+			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+		}
 	} while (s_add1.empty());
 
 	cout << "\tAddress 2: ";
 	getline(cin, s_add2);
 
+	count = 0;
 	do {
 		cout << "\tArea: ";
 		getline(cin, s_area);
 
-		if (s_area.empty())
+		if (s_area.empty()){
 			cout << "\tDo not leave blank.\n";
+			count++;
+		}
+		if (count == 3)
+		{
+			do
+			{
+				cout << "\n\tDo you want to stop signing up?(Y/N): ";
+				cin >> stop;
+				if (stop == 'Y' || stop == 'y')
+				{
+					cout << "\n\tPress enter to return to Main Menu...";
+					_getch();
+					system("cls");
+					AdminMainMenu();
+				}
+				else if (stop == 'N' || stop == 'n')
+				{
+					count = 0;
+					cout << endl;
+					cin.ignore(1, '\n');
+					continue;
+				}
+				else
+					cout << "\tInvalid input. Try again\n";
+			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+		}
 	} while (s_area.empty());
 
+	count = 0;
 	do {
 		cout << "\tPostcode: ";
 		getline(cin, s_postcode);
 
-		if (s_postcode.length() != 5)
+		if (!s_postcode.empty() && s_postcode.length() != 5)
 			cout << "\tPlease follow Malaysia's postcode format. Try again.\n";
 
-		if (s_postcode.empty())
+		if (s_postcode.empty()){
 			cout << "\tDo not leave blank.\n";
+			count++;
+		}
+		if (count == 3)
+		{
+			do
+			{
+				cout << "\n\tDo you want to stop signing up?(Y/N): ";
+				cin >> stop;
+				if (stop == 'Y' || stop == 'y')
+				{
+					cout << "\n\tPress enter to return to Main Menu...";
+					_getch();
+					system("cls");
+					AdminMainMenu();
+				}
+				else if (stop == 'N' || stop == 'n')
+				{
+					count = 0;
+					cout << endl;
+					cin.ignore(1, '\n');
+					continue;
+				}
+				else
+					cout << "\tInvalid input. Try again\n";
+			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+		}
 	} while (s_postcode.empty() || s_postcode.length() != 5);
 
+	count = 0;
 	do {
 		cout << "\tState: ";
 		getline(cin, s_state);
 
-		if (s_state.empty())
+		if (s_state.empty()){
 			cout << "\tDo not leave blank.\n";
+			count++;
+		}
+		if (count == 3)
+		{
+			do
+			{
+				cout << "\n\tDo you want to stop signing up?(Y/N): ";
+				cin >> stop;
+				if (stop == 'Y' || stop == 'y')
+				{
+					cout << "\n\tPress enter to return to Main Menu...";
+					_getch();
+					system("cls");
+					AdminMainMenu();
+				}
+				else if (stop == 'N' || stop == 'n')
+				{
+					count = 0;
+					cout << endl;
+					cin.ignore(1, '\n');
+					continue;
+				}
+				else
+					cout << "\tInvalid input. Try again\n";
+			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+		}
 	} while (s_state.empty());
 
+	count = 0;
 	do {
 		cout << "\tUsername: ";
 		getline(cin, username);
 
-		if (username.empty())
+		if (username.empty()){
 			cout << "\tDo not leave blank.\n";
+			count++;
+		}
+		if (count == 3)
+		{
+			do
+			{
+				cout << "\n\tDo you want to stop signing up?(Y/N): ";
+				cin >> stop;
+				if (stop == 'Y' || stop == 'y')
+				{
+					cout << "\n\tPress enter to return to Main Menu...";
+					_getch();
+					system("cls");
+					AdminMainMenu();
+				}
+				else if (stop == 'N' || stop == 'n')
+				{
+					count = 0;
+					cout << endl;
+					cin.ignore(1, '\n');
+					continue;
+				}
+				else
+					cout << "\tInvalid input. Try again\n";
+			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+		}
 	} while (username.empty());
 
 	do {
+		count = 0;
 		do {
 			cout << "\tPassword: ";
 			getline(cin, password);
 
-			if (password.empty())
+			if (password.empty()){
 				cout << "\tDo not leave blank.\n";
+				count++;
+			}
+			if (count == 3)
+			{
+				do
+				{
+					cout << "\n\tDo you want to stop signing up?(Y/N): ";
+					cin >> stop;
+					if (stop == 'Y' || stop == 'y')
+					{
+						cout << "\n\tPress enter to return to Main Menu...";
+						_getch();
+						system("cls");
+						AdminMainMenu();
+					}
+					else if (stop == 'N' || stop == 'n')
+					{
+						count = 0;
+						cout << endl;
+						cin.ignore(1, '\n');
+						continue;
+					}
+					else
+						cout << "\tInvalid input. Try again\n";
+				} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+			}
 		} while (password.empty());
 
+		count = 0;
 		do {
 			cout << "\tRe-enter password: ";
 			getline(cin, password2);
 
-			if (password2.empty())
+			if (password2.empty()){
 				cout << "\tDo not leave blank.\n";
+				count++;
+			}
+			if (count == 3)
+			{
+				do
+				{
+					cout << "\n\tDo you want to stop signing up?(Y/N): ";
+					cin >> stop;
+					if (stop == 'Y' || stop == 'y')
+					{
+						cout << "\n\tPress enter to return to Main Menu...";
+						_getch();
+						system("cls");
+						AdminMainMenu();
+					}
+					else if (stop == 'N' || stop == 'n')
+					{
+						count = 0;
+						cout << endl;
+						cin.ignore(1, '\n');
+						continue;
+					}
+					else
+						cout << "\tInvalid input. Try again\n";
+				} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
+			}
 		} while (password2.empty());
 
 		if (password != password2)
