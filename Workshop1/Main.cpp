@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <iomanip>
 #include <ctime>
 #include <cstdlib>
@@ -2880,7 +2880,7 @@ void RemoveStaff()
 						system("cls");
 						AdminMainMenu();
 					}
-					else if (p == 'y' || p == 'Y')
+					else if (p == 'y' || p == 'Y') 
 						continue;
 					else
 						cout << "\tInvalid input.\n\n";
