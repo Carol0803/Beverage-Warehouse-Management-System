@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <ctime>
+#include <cmath>
 #include <cstdlib>
 #include <conio.h>
 #include <cctype>
@@ -3021,9 +3022,9 @@ void SalesReport()
 
 	char sr;
 	string date;
-	string productID[200], quantity[200], subtotal[200];
-	string g_productID[200];
-	int g_quantity[200] = { 0 };
+	string productID[150], quantity[150], subtotal[150];
+	string g_productID[150];
+	int g_quantity[150] = { 0 };
 
 	cout << setw(15) << "\t1 - By Date\n";
 	cout << setw(16) << "\t2 - By Month\n";
@@ -3171,8 +3172,8 @@ void BarGraph(int a, string g_productID[], int g_quantity[])
 {
 	string quantity = "0";
 	int z = 0;
-	string productIDs[200];
-	int quantities[200] = { 0 };
+	string productIDs[150];
+	int quantities[150] = { 0 };
 
 	string checkPN_query = "SELECT * FROM product";
 	const char* checkPN = checkPN_query.c_str();
@@ -3221,6 +3222,8 @@ void BarGraph(int a, string g_productID[], int g_quantity[])
 			{
 				if (quantities[w] >= x)
 					cout << " *** " << " ";
+				else if (quantities[w] < 1000 && quantities[w] > 0 && x == 1000)
+					cout << " *** " << " ";
 				else
 					cout << "     " << " ";
 			}
@@ -3234,7 +3237,11 @@ void BarGraph(int a, string g_productID[], int g_quantity[])
 			cout << "\t" << right << setw(5) << x << " |";
 			for (int w = 0; w < z; w++)
 			{
-				if (quantities[w] >= x)
+				
+				
+				if (quantities[w] >= x) 
+					cout << " *** " << " ";
+				else if(quantities[w] < 500 && quantities[w] > 0 && x==500)
 					cout << " *** " << " ";
 				else
 					cout << "     " << " ";
@@ -3250,6 +3257,8 @@ void BarGraph(int a, string g_productID[], int g_quantity[])
 			for (int w = 0; w < z; w++)
 			{
 				if (quantities[w] >= x)
+					cout << " *** " << " ";
+				else if (quantities[w] < 100 && quantities[w] > 0 && x == 100)
 					cout << " *** " << " ";
 				else
 					cout << "     " << " ";
@@ -3312,8 +3321,8 @@ void TopBeverage(int a, string g_productID[], int g_quantity[])
 
 void TopBuyers(string date)
 {
-	string total_amount[200], cust_ID[200], custid[200];
-	double total[200] = { 0 };
+	string total_amount[150], cust_ID[150], custid[150];
+	double total[150] = { 0 };
 	string checkTA_query = "SELECT * FROM orders WHERE order_date LIKE '%" + date + "%'";
 	const char* checkTA = checkTA_query.c_str();
 	qstate = mysql_query(conn, checkTA);
@@ -3370,9 +3379,7 @@ void TopBuyers(string date)
 				cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
 		}
 
-		/*
 		//bar chart for amount spend
-		//int ASh_quantity;
 		int ASmax = total[0];
 		for (int y = 1; y < w; y++)
 		{
@@ -3380,54 +3387,63 @@ void TopBuyers(string date)
 				ASmax = total[y];
 		}
 
-		cout << "\n\n\t\t\t\t------------------------------------------------------------------\n";
-		cout << "\t\t\t\t|		Graph of Amount Spend versus Customer ID		 |\t\t\t\t\t\n";
-		cout << "\t\t\t\t------------------------------------------------------------------\n";
+		cout << "\n\n\t------------------------------------------------------------------\n";
+		cout << "\t|		Graph of Amount Spend versus Customer ID	 |\n";
+		cout << "\t------------------------------------------------------------------\n";
 
 		cout << "\t" << "Amount Spend(RM)\n";
 		cout << "\t" << right << setw(7) << "^" << endl;
 
 		if (ASmax > 100000)
 		{
-			for (int x = ASmax + (10000); x > 0; x = x - 10000)
+			ASmax = 100000 * ceil(ASmax / 100000);
+			for (int x = ASmax + (50000); x > 0; x = x - 50000)
 			{
-				cout << "\t" << right << setw(5) << x << " |";
+				cout << "\t" << right << setw(6) << x << "| ";
 				for (int ASw = 0; ASw < w; ASw++)
 				{
 					if (total[ASw] >= x)
-						cout << " *** " << " ";
+						cout << " ***   " << " ";
+					else if (total[ASw] < 50000 && total[ASw] > 0 && x == 50000)
+						cout << " ***   " << " ";
 					else
-						cout << "     " << " ";
+						cout << "       " << " ";
 				}
 				cout << endl;
 			}
 		}
-		if (ASmax > 25000)
+		else if (ASmax > 25000)
 		{
+			ASmax = 10000 * ceil(ASmax / 10000);
 			for (int x = ASmax + (5000); x > 0; x = x - 5000)
 			{
-				cout << "\t" << right << setw(5) << x << " |";
+				cout << "\t" << right << setw(5) << x << " | ";
 				for (int ASw = 0; ASw < w; ASw++)
 				{
 					if (total[ASw] >= x)
-						cout << " *** " << " ";
+						cout << " ***   " << " ";
+					else if (total[ASw] < 5000 && total[ASw] > 0 && x == 5000)
+						cout << " ***   " << " ";
 					else
-						cout << "     " << " ";
+						cout << "       " << " ";
 				}
 				cout << endl;
 			}
 		}
 		else
 		{
+			ASmax = 10000 * ceil(ASmax / 10000);
 			for (int x = ASmax + (1000); x > 0; x = x - 1000)
 			{
-				cout << "\t" << right << setw(5) << x << " |";
+				cout << "\t" << right << setw(5) << x << " | ";
 				for (int ASw = 0; ASw < w; ASw++)
 				{
 					if (total[ASw] >= x)
-						cout << " *** " << " ";
+						cout << " ***   " << " ";
+					else if (total[ASw] < 1000 && total[ASw] > 0 && x == 1000)
+						cout << " ***   " << " ";
 					else
-						cout << "     " << " ";
+						cout << "       " << " ";
 				}
 				cout << endl;
 			}
@@ -3436,16 +3452,12 @@ void TopBuyers(string date)
 		cout << "\t      +";
 		for (int ASw = 0; ASw < w; ASw++)
 		{
-			cout << "--+---";
+			cout << "---+----";
 		}
 		cout << "> Customer ID\n";
 		cout << "\t       ";
-		for (int ASw = 0; ASw < w; ASw++)
-		{
-			cout << productIDs[ASw] << " ";
-		}
-		cout << endl << endl;
-		*/
+		for (int q = 0; q < w; q++) 
+			cout << custid[q] << " ";
 
 		double temp3;
 		string temp4;
