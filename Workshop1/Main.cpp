@@ -1037,7 +1037,7 @@ void PlaceOrder()
 
 void Invoice(string orderID, string custID)
 {
-	string order_date, payment_duedate, subtotal, productID[50];
+	string order_date, payment_duedate, payment_method, message, productID[50];
 	system("cls");
 	header();
 	cout << "\t--------------------------------------------------------------------------------------------------------" << endl << endl;
@@ -1052,7 +1052,6 @@ void Invoice(string orderID, string custID)
 		res = mysql_store_result(conn);
 		while (row = mysql_fetch_row(res)) {
 			order_date = row[1];
-			//subtotal = row[4];
 		}
 	}
 	else
@@ -1065,7 +1064,14 @@ void Invoice(string orderID, string custID)
 	{
 		res = mysql_store_result(conn);
 		while (row = mysql_fetch_row(res))
+		{
 			payment_duedate = row[5];
+			payment_method = row[3];
+			if (payment_method != "4")
+				message = "\n\t*************************** Delivery will be arranged after payment is done. ***************************";
+			else
+				message = "\n\t************************************** Delivery will be arranged. **************************************";
+		}
 	}
 	else
 		cout << "Query Execution Problem!" << mysql_errno(conn) << endl;
@@ -1155,6 +1161,7 @@ void Invoice(string orderID, string custID)
 	cout << "\tDiscount: RM" << fixed << setprecision(2) << discount << endl;
 	cout << "\tTotal Amount: RM" << fixed << setprecision(2) << total_amount << endl;
 	cout << "\n\t************************************* Please pay before " << payment_duedate << " *************************************";
+	cout << message;
 
 	//export the invoice as text file
 	char txt;
@@ -1181,7 +1188,11 @@ void Invoice(string orderID, string custID)
 				res = mysql_store_result(conn);
 				while (row = mysql_fetch_row(res)) {
 					order_date = row[1];
-					subtotal = row[4];
+					payment_method = row[3];
+					if (payment_method != "4")
+						message = "\n*************************** Delivery will be arranged after payment is done. ***************************";
+					else
+						message = "\n************************************** Delivery will be arranged. **************************************";
 				}
 			}
 			else
@@ -1284,6 +1295,7 @@ void Invoice(string orderID, string custID)
 			cout << "Discount: RM" << fixed << setprecision(2) << discount << endl;
 			cout << "Total Amount: RM" << fixed << setprecision(2) << total_amount << endl;
 			cout << "\n************************************* Please pay before " << payment_duedate << " *************************************";
+			cout << message;
 
 			cout.rdbuf(cout_buff);	// go back to cout buffer
 			cout << "\tSuccessfully exported to ";
@@ -1621,8 +1633,8 @@ void UpdateOrder()
 		cout << "\t-----------------------------------------" << endl << endl;
 
 		string ds, DS;
-		//display all orders that have not delivered
-		qstate = mysql_query(conn, "SELECT * FROM orders WHERE delivery_status <> '3'");
+		//display all orders that have not delivered AND payment done/credit order
+		qstate = mysql_query(conn, "SELECT * FROM orders WHERE delivery_status <> '3' AND order_ID IN (SELECT order_ID FROM paymentdetails WHERE payment_status = '1' OR payment_method = '4')");
 		if (!qstate)
 		{
 			cout << "\t" << left << setw(15) << "Orders" << setw(15) << "Status" << endl;
@@ -1666,6 +1678,19 @@ void UpdateOrder()
 						else
 						{
 							cout << "\n\tSuccessfully updated.\n";
+							if (new_delivery_status == "2")
+							{
+								char d;
+								do {
+									cout << "\n\tPrint Delivery Order(DO)?  (Y/N):";
+									cin >> d;
+									cin.ignore(100, '\n');
+									if (d == 'y' || d == 'Y')
+										DeliveryNote(orderID);
+									if (d != 'y' && d != 'Y' && d != 'n' && d != 'N')
+										cout << "Invalid input. Try again.\n";
+								} while (d != 'y' && d != 'Y' && d != 'n' && d != 'N');
+							}
 							cout << "\tPress enter to return to Main Menu...";
 							_getch();
 							system("cls");
