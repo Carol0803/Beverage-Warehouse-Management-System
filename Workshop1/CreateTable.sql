@@ -29,6 +29,21 @@ CREATE TABLE PRODUCT (
 	PRIMARY KEY(product_ID)
 );
 
+CREATE TABLE CUSTOMER (
+	cust_ID				INT(7)			ZEROFILL   NOT NULL   AUTO_INCREMENT   UNIQUE,
+	cust_name			VARCHAR(50)		NOT NULL,
+	cust_tel			CHAR(12)		NOT NULL,
+	cust_address1		VARCHAR(50)		NOT NULL,
+	cust_address2		VARCHAR(50),
+	cust_area			VARCHAR(20)		NOT NULL,
+	cust_postcode		CHAR(5)			NOT NULL,
+	cust_state			VARCHAR(20)		NOT NULL,
+	cust_debt_amount	NUMERIC(9,2)	DEFAULT 0.00,
+	user_account_ID		INT(8)			ZEROFILL   NOT NULL	UNIQUE,
+	PRIMARY KEY(cust_ID),
+	FOREIGN KEY(user_account_ID)REFERENCES USERACCOUNT(user_account_ID)
+);
+
 CREATE TABLE ORDERS (
     order_ID			INT(10)			NOT NULL   AUTO_INCREMENT   UNIQUE,
 	order_date			DATE			NOT NULL,
@@ -54,26 +69,11 @@ CREATE TABLE PAYMENTDETAILS (
 
 CREATE TABLE ORDERDETAILS (
 	order_details_ID	INT(10)		NOT NULL   AUTO_INCREMENT   UNIQUE,
-	order_ID			INT(10)		NOT NULL,
-	product_ID			INT(5)		NOT NULL,
+	order_ID			INT(10)		NOT NULL   UNIQUE,
+	product_ID			INT(5)		ZEROFILL   NOT NULL  UNIQUE,
 	quantity			NUMERIC(10)		NOT NULL,
 	sub_total			NUMERIC(9,2)	NOT NULL,
 	PRIMARY KEY(order_details_ID),
-	FOREIGN KEY(order_ID)REFERENCES ORDERS(order_ID),
-	FOREIGN KEY(product_ID)REFERENCES PRODUCT(product_ID)
+	FOREIGN KEY(product_ID)REFERENCES PRODUCT(product_ID),
+	FOREIGN KEY(order_ID)REFERENCES ORDERS(order_ID)
 )AUTO_INCREMENT=1012000000;
-
-CREATE TABLE CUSTOMER (
-	cust_ID				INT(7)			ZEROFILL   NOT NULL   AUTO_INCREMENT   UNIQUE,
-	cust_name			VARCHAR(50)		NOT NULL,
-	cust_tel			CHAR(12)		NOT NULL,
-	cust_address1		VARCHAR(50)		NOT NULL,
-	cust_address2		VARCHAR(50),
-	cust_area			VARCHAR(20)		NOT NULL,
-	cust_postcode		CHAR(5)			NOT NULL,
-	cust_state			VARCHAR(20)		NOT NULL,
-	cust_debt_amount	NUMERIC(9,2)	DEFAULT 0.00,
-	user_account_ID		INT(8)			ZEROFILL   NOT NULL	UNIQUE,
-	PRIMARY KEY(cust_ID),
-	FOREIGN KEY(user_account_ID)REFERENCES USERACCOUNT(user_account_ID)
-);
