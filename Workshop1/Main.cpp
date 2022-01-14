@@ -9,9 +9,6 @@
 #include <string>
 #include <stdlib.h>
 #include <mysql.h>		//libmysql
-//#include <windows.h>
-//#include <vector>
-//#include <algorithm>
 using namespace std;
 
 int qstate;
@@ -67,7 +64,7 @@ public:
 		if (!conn)
 			cout << "Failed To Connect!" << endl;
 
-		conn = mysql_real_connect(conn, "localhost", "root", "", "testing", 3306, NULL, 0);
+		conn = mysql_real_connect(conn, "localhost", "root", "", "workshop1", 3306, NULL, 0);
 		if (!conn)
 		{
 			cout << "Failed To Connect To MySql." << endl;
@@ -242,11 +239,21 @@ void SignUp()
 	cout << "\tPlease fill the details to register an account." << endl;
 	int count = 0;
 	char stop;
+	bool skip = false;
 
 	do {
+		skip = false;
 		cout << "\tName: ";
 		getline(cin, cust_name);
 
+		const char* cn = cust_name.c_str();
+		for (int i = 0; i <= strlen(cn); i++) {
+			if (isdigit(cn[i])) {
+				skip = true;
+			}
+		}
+		if(skip == true)
+			cout << "\tDo not include number in your name.\n";
 		if (cust_name.empty()) {
 			cout << "\tDo not leave blank.\n";
 			count++;
@@ -274,12 +281,22 @@ void SignUp()
 					cout << "\tInvalid input. Try again\n";
 			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
 		}
-	} while (cust_name.empty());
+	} while (cust_name.empty() || skip == true);
 
 	count = 0;
 	do {
+		skip = false;
 		cout << "\tContact number: ";
 		getline(cin, cust_tel);
+
+		const char* ccn = cust_tel.c_str();
+		for (int i = 0; i <= strlen(ccn); i++) {
+			if (isalpha(ccn[i])) {
+				skip = true;
+			}
+		}
+		if (skip == true)
+			cout << "\tInvalid contact number.\n";
 
 		if (cust_tel.empty()) {
 			cout << "\tDo not leave blank.\n";
@@ -308,7 +325,7 @@ void SignUp()
 					cout << "\tInvalid input. Try again\n";
 			} while (stop != 'Y' && stop != 'y' && stop != 'N' && stop != 'n');
 		}
-	} while (cust_tel.empty());
+	} while (cust_tel.empty() || skip == true);
 
 	count = 0;
 	do {
@@ -3132,8 +3149,8 @@ void SalesReport()
 
 			//display all products and quantity sold for each product for respective date 
 			cout << "\tAnalysis based on Product Sold : \n";
-			cout << "\t" << left << setw(15) << "Product ID" << setw(45) << "Product Name" << right << setw(22) << "Quantity Sold(carton)" << endl;
-			cout << "\t------------------------------------------------------------------------------------" << endl;
+			cout << "\t" << left << setw(15) << "Product ID" << setw(50) << "Product Name" << right << setw(22) << "Quantity Sold(carton)" << endl;
+			cout << "\t---------------------------------------------------------------------------------------" << endl;
 			string checkPN_query = "SELECT * FROM product";
 			const char* checkPN = checkPN_query.c_str();
 			qstate = mysql_query(conn, checkPN);
@@ -3148,7 +3165,7 @@ void SalesReport()
 							quantity = to_string(g_quantity[b]);
 					}
 
-					cout << "\t" << left << setw(15) << row[0] << setw(45) << row[1] << right << setw(22) << quantity << endl;
+					cout << "\t" << left << setw(15) << row[0] << setw(50) << row[1] << right << setw(22) << quantity << endl;
 
 					quantity = "0";
 				}
@@ -3422,14 +3439,14 @@ void TopBuyers(string date)
 		if (ASmax > 100000)
 		{
 			ASmax = 100000 * ceil(ASmax / 100000);
-			for (int x = ASmax + (50000); x > 0; x = x - 50000)
+			for (int x = ASmax + (25000); x > 0; x = x - 25000)
 			{
 				cout << "\t" << right << setw(6) << x << "| ";
 				for (int ASw = 0; ASw < w; ASw++)
 				{
 					if (total[ASw] >= x)
 						cout << " ***   " << " ";
-					else if (total[ASw] < 50000 && total[ASw] > 0 && x == 50000)
+					else if (total[ASw] < 25000 && total[ASw] > 0 && x == 25000)
 						cout << " ***   " << " ";
 					else
 						cout << "       " << " ";
@@ -3437,7 +3454,7 @@ void TopBuyers(string date)
 				cout << endl;
 			}
 		}
-		else if (ASmax > 25000)
+		else if (ASmax > 50000)
 		{
 			ASmax = 10000 * ceil(ASmax / 10000);
 			for (int x = ASmax + (5000); x > 0; x = x - 5000)
@@ -3448,6 +3465,24 @@ void TopBuyers(string date)
 					if (total[ASw] >= x)
 						cout << " ***   " << " ";
 					else if (total[ASw] < 5000 && total[ASw] > 0 && x == 5000)
+						cout << " ***   " << " ";
+					else
+						cout << "       " << " ";
+				}
+				cout << endl;
+			}
+		}
+		else if (ASmax > 25000)
+		{
+			ASmax = 10000 * ceil(ASmax / 10000);
+			for (int x = ASmax + (2500); x > 0; x = x - 2500)
+			{
+				cout << "\t" << right << setw(5) << x << " | ";
+				for (int ASw = 0; ASw < w; ASw++)
+				{
+					if (total[ASw] >= x)
+						cout << " ***   " << " ";
+					else if (total[ASw] < 2500 && total[ASw] > 0 && x == 2500)
 						cout << " ***   " << " ";
 					else
 						cout << "       " << " ";
@@ -3578,8 +3613,8 @@ void exportSalesReport(string date, string productID[], string quantity[], strin
 			int z = 0;
 			cout << "\t\t\t\t\tSALES REPORT " << date << endl << endl;
 			cout << "\tAnalysis based on Product Sold : \n";
-			cout << "\t" << left << setw(15) << "Product ID" << setw(45) << "Product Name" << right << setw(22) << "Quantity Sold(carton)" << endl;
-			cout << "\t------------------------------------------------------------------------------------" << endl;
+			cout << "\t" << left << setw(15) << "Product ID" << setw(50) << "Product Name" << right << setw(22) << "Quantity Sold(carton)" << endl;
+			cout << "\t---------------------------------------------------------------------------------------" << endl;
 			string checkPN_query = "SELECT * FROM product";
 			const char* checkPN = checkPN_query.c_str();
 			qstate = mysql_query(conn, checkPN);
@@ -3594,7 +3629,7 @@ void exportSalesReport(string date, string productID[], string quantity[], strin
 							quantity = to_string(g_quantity[b]);
 					}
 
-					cout << "\t" << left << setw(15) << row[0] << setw(45) << row[1] << right << setw(22) << quantity << endl;
+					cout << "\t" << left << setw(15) << row[0] << setw(50) << row[1] << right << setw(22) << quantity << endl;
 
 					quantity = "0";
 				}
